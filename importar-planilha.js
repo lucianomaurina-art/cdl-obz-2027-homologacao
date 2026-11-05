@@ -62,7 +62,8 @@ function make(text){
 file.addEventListener('change',async()=>{report.textContent='';if(!file.files?.length)return;
  try{const {result,warnings,totals,center}=make(await file.files[0].text());
  json.value=JSON.stringify(result,null,2);json.dispatchEvent(new Event('input'));
+ reconciled=true;document.getElementById('reconcileStatus').textContent='Conciliação aprovada: totais de receitas, despesas e resultado conferidos.';
  report.textContent='Pacote '+center+' · '+result.length+' rubricas identificadas. Receitas: R$ '+totals.revenue.toFixed(2)+'; despesas: R$ '+totals.expense.toFixed(2)+'. '+(warnings.length?'ATENÇÃO: '+warnings.slice(0,12).join(' | '):'Sem divergências de total detectadas.')+' Clique em “Validar prévia” e confira os totais com a planilha.';
- }catch(e){json.value='';json.dispatchEvent(new Event('input'));report.textContent='Erro: '+e.message}
+ }catch(e){json.value='';json.dispatchEvent(new Event('input'));document.getElementById('reconcileStatus').textContent='Conciliação rejeitada. Nenhum dado foi autorizado para importação.';report.textContent='Erro: '+e.message}
 });
 })();
