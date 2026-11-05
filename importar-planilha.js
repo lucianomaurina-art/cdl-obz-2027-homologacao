@@ -38,29 +38,31 @@ function make(text){
  const result=[],warnings=[],totals={revenue:0,expense:0},control={revenue:null,expense:null,result:null};let seen=new Set();
  rows.forEach((r,i)=>{if(r.length<19)return;
  const center=String(r[1]||'').trim().toUpperCase(),group=String(r[2]||'').trim().toUpperCase(),description=String(r[5]||'').trim();
- if(center!=='SPC BRASIL'||!description)return;
+ const selected=document.getElementById('centers').selectedOptions[0]?.textContent?.trim().toUpperCase();
+ if(!selected)throw Error('Selecione um pacote antes de carregar o CSV.');
+ if(center!==selected||!description)return;
  if(group==='TOTAL RECEITAS'||group==='TOTAL DESPESAS'||group==='RESULTADO DO CENTRO'){const k=group==='TOTAL RECEITAS'?'revenue':group==='TOTAL DESPESAS'?'expense':'result';try{control[k]=numeric(r[18])}catch(e){warnings.push('Linha '+(i+1)+': subtotal inválido')}return;}if(group==='CENTRO DE CUSTO')return;
  const category=group==='RECEITAS'?'revenue':group==='DESPESAS'?'expense':null;
  if(!category){warnings.push('Linha '+(i+1)+': grupo não reconhecido ('+group+')');return}
  let months;try{months=r.slice(6,18).map(numeric)}catch(e){warnings.push('Linha '+(i+1)+': '+e.message);return}
- const sourceKey='OBZ2027:SPC:'+String(i+1); // row index stable only for complete-sheet export
+ const sourceKey='OBZ2027:'+center.replace(/[^A-Z0-9]+/g,'_')+':'+String(i+1); // row index stable only for complete-sheet export
  if(seen.has(sourceKey))throw Error('Identificador duplicado');seen.add(sourceKey);
  const item={source_key:sourceKey,category,description,account_code:String(r[4]||''),months};
  const total=months.reduce((a,b)=>a+b,0);totals[category]+=total;
  if(r[18]&&r[18].trim()!=='-'){const annual=numeric(r[18]);if(Math.abs(annual-total)>0.06)warnings.push('Linha '+(i+1)+': total anual divergente em '+(annual-total).toFixed(2))}
  result.push(item);
  });
- if(!result.length)throw Error('Nenhuma rubrica SPC Brasil reconhecida. Exporte A:S da aba Orçamento 2027.');
+ if(!result.length)throw Error('Nenhuma rubrica do pacote selecionado foi reconhecida. Exporte A:S da aba Orçamento 2027.');
  if(control.revenue===null||control.expense===null||control.result===null)throw Error('CSV sem as três linhas de controle (total receitas, total despesas, resultado). Exporte a aba inteira, não um recorte.');
  const cents=n=>Math.round(n*100);const actual={revenue:totals.revenue,expense:totals.expense,result:totals.revenue-totals.expense};
  for(const k of Object.keys(control)){if(Math.abs(cents(actual[k])-cents(control[k]))>2)throw Error('Conciliação bloqueada em '+k+': rubricas '+actual[k].toFixed(2)+' versus subtotal '+control[k].toFixed(2));}
  if(warnings.length)throw Error('Importação bloqueada por '+warnings.length+' divergência(s): '+warnings.slice(0,5).join(' | '));
- return {result,warnings,totals,delim};
+ return {result,warnings,totals,delim,center:document.getElementById('centers').selectedOptions[0]?.textContent};
 }
 file.addEventListener('change',async()=>{report.textContent='';if(!file.files?.length)return;
- try{const {result,warnings,totals}=make(await file.files[0].text());
+ try{const {result,warnings,totals,center}=make(await file.files[0].text());
  json.value=JSON.stringify(result,null,2);json.dispatchEvent(new Event('input'));
- report.textContent=result.length+' rubricas identificadas. Receitas: R$ '+totals.revenue.toFixed(2)+'; despesas: R$ '+totals.expense.toFixed(2)+'. '+(warnings.length?'ATENÇÃO: '+warnings.slice(0,12).join(' | '):'Sem divergências de total detectadas.')+' Clique em “Validar prévia” e confira os totais com a planilha.';
+ report.textContent='Pacote '+center+' · '+result.length+' rubricas identificadas. Receitas: R$ '+totals.revenue.toFixed(2)+'; despesas: R$ '+totals.expense.toFixed(2)+'. '+(warnings.length?'ATENÇÃO: '+warnings.slice(0,12).join(' | '):'Sem divergências de total detectadas.')+' Clique em “Validar prévia” e confira os totais com a planilha.';
  }catch(e){json.value='';json.dispatchEvent(new Event('input'));report.textContent='Erro: '+e.message}
 });
 })();
