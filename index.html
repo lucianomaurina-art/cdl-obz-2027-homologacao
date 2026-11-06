@@ -86,7 +86,7 @@ async function loadStrategyCatalog(){
  const requests=[
  db.from('obz_strategy_objectives').select('code,perspective,title').eq('fiscal_year',2027).order('code'),
  db.from('obz_strategy_krs').select('code,objective_code,result_text,indicator,target_2027').eq('fiscal_year',2027).order('code'),
- db.from('obz_portfolio_targets').select('target_key,service_code,service_name,metric,target_2027').eq('fiscal_year',2027).order('service_code').order('source_row')
+ db.from('obz_portfolio_targets').select('target_key,service_code,service_name,metric,target_2027,source_objectives_text,source_rk_contribution_text').eq('fiscal_year',2027).order('service_code').order('source_row')
  ];
  const results=await Promise.all(requests);
  if(results.some(r=>r.error)){notice('Cadastros estratégicos indisponíveis: '+results.filter(r=>r.error).map(r=>r.error.message).join(' / '),true);return}
@@ -115,15 +115,15 @@ function strategyRender(){
  const holder=$(g.host);holder.replaceChildren();
  for(const item of g.items){
  const code=g.code(item),l=document.createElement('label'),box=document.createElement('input'),span=document.createElement('span');
- box.type='checkbox';box.checked=strategyDraft[g.key].has(code);box.disabled=!strategyReady||!strategyEditable()||strategySaving;
- span.textContent=g.label(item);span.title=g.key==='krs'?item.result_text:g.key==='objectives'?item.perspective+' — '+item.title:span.textContent;
+ box.type='checkbox';box.dataset.code=code;box.checked=strategyDraft[g.key].has(code);box.disabled=!strategyReady||!strategyEditable()||strategySaving;
+ span.textContent=g.label(item);span.title=g.key==='krs'?item.result_text:g.key==='objectives'?item.perspective+' — '+item.title:(item.source_objectives_text||'')+' | '+(item.source_rk_contribution_text||'');if(g.key==='portfolio'){const refs=[...new Set((item.source_rk_contribution_text||'').match(/OE[0-9]+-RK[0-9]+/g)||[])];if(refs.length){const small=document.createElement('small');small.style.display='block';small.style.color='#64748b';small.textContent='RK citado na Matriz: '+refs.join(', ');span.append(small)}}
  box.onchange=()=>{
   if(g.key==='objectives'&&!box.checked&&strategyCatalog.krs.some(kr=>kr.objective_code===code&&strategyDraft.krs.has(kr.code))){
    box.checked=true;notice('Desmarque primeiro os resultados-chave associados a '+code+'.',true);return
   }
   if(box.checked)strategyDraft[g.key].add(code);else strategyDraft[g.key].delete(code);
   if(g.key==='krs'&&box.checked)strategyDraft.objectives.add(item.objective_code);
-  if(g.key==='krs')strategyRender();else strategyUpdateStatus()
+  if(g.key==='krs'&&box.checked){const boxes=$('strategyObjectives').querySelectorAll('input[type=checkbox]');for(const goalBox of boxes)if(goalBox.dataset.code===item.objective_code)goalBox.checked=true}strategyUpdateStatus()
  };
  l.append(box,span);holder.append(l)
  }
