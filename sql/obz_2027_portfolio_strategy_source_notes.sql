@@ -1,0 +1,2 @@
+alter table public.obz_portfolio_targets add column if not exists source_objectives_text text not null default '';
+alter table public.obz_portfolio_targets add column if not exists source_rk_contribution_text text not null default '';
