@@ -29,6 +29,7 @@ function numeric(raw){let s=String(raw??'').trim();if(!s||s==='-')return 0;
  else if(dot>=0&&/\.\d{3}(?:\.\d{3})*$/.test(s))s=s.replace(/\./g,'');
  const n=Number(s)*(neg?-1:1);if(!Number.isFinite(n))throw Error('Valor inválido');return Math.round(n*100)/100;
 }
+function normalizeName(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toUpperCase()}
 function make(text){
  const lines=text.split(/\r?\n/).filter(x=>x.trim()),semi=(lines[0]?.match(/;/g)||[]).length,comma=(lines[0]?.match(/,/g)||[]).length;
  // A full Google Sheet CSV has at least 19 columns; choose separator from first row.
@@ -37,8 +38,8 @@ function make(text){
  // The CSV must represent the complete Orçamento 2027 sheet, including control totals.
  const result=[],warnings=[],totals={revenue:0,expense:0},control={revenue:null,expense:null,result:null};let seen=new Set();
  rows.forEach((r,i)=>{if(r.length<19)return;
- const center=String(r[1]||'').trim().toUpperCase(),group=String(r[2]||'').trim().toUpperCase(),description=String(r[5]||'').trim();
- const selected=document.getElementById('centers').selectedOptions[0]?.textContent?.trim().toUpperCase();
+ const center=normalizeName(r[1]),group=normalizeName(r[2]),description=String(r[5]||'').trim();
+ const selected=normalizeName(document.getElementById('centers').selectedOptions[0]?.textContent);
  if(!selected)throw Error('Selecione um pacote antes de carregar o CSV.');
  if(center!==selected||!description)return;
  if(group==='TOTAL RECEITAS'||group==='TOTAL DESPESAS'||group==='RESULTADO DO CENTRO'){const k=group==='TOTAL RECEITAS'?'revenue':group==='TOTAL DESPESAS'?'expense':'result';try{control[k]=numeric(r[18])}catch(e){warnings.push('Linha '+(i+1)+': subtotal inválido')}return;}if(group==='CENTRO DE CUSTO')return;
