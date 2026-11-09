@@ -1,0 +1,359 @@
+{
+  "status": "propostas_para_validacao",
+  "fontes": [
+    "Planilha_Mestra_OBZ_2027_CDL_Novo_Hamburgo, aba 03_Objetivos_2027",
+    "Matriz de Gestão do Portfólio 2027, aba 01_Matriz_Portfólio_oficial base de dados"
+  ],
+  "records": [
+    {
+      "code": "CAMPANHAS",
+      "krs": [
+        "OE2-RK3",
+        "OE4-RK1",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-09:R34",
+        "SRV-09:R35",
+        "SRV-09:R36"
+      ],
+      "rationale": "Ligação direta entre campanhas comerciais, participação de associados, receita e sustentabilidade da solução; validar a contribuição de cada ação para uso de serviços e margem.",
+      "objectives": [
+        "OE2",
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "CDL_CULTURA",
+      "krs": [
+        "OE2-RK4",
+        "OE3-RK2"
+      ],
+      "targets": [],
+      "rationale": "Contribuição institucional indireta para percepção de valor, satisfação e relacionamento com a comunidade; validar se os indicadores propostos medem o impacto do programa.",
+      "objectives": [
+        "OE2",
+        "OE3"
+      ]
+    },
+    {
+      "code": "CDL_IA",
+      "krs": [
+        "OE4-RK2",
+        "OE4-RK1",
+        "OE1-RK3"
+      ],
+      "targets": [
+        "SRV-12:R37",
+        "SRV-12:R38",
+        "SRV-12:R39",
+        "SRV-12:R40",
+        "SRV-12:R41"
+      ],
+      "rationale": "Solução de diversificação: novos serviços/melhorias, assinantes, receita, margem, retenção e inadimplência. Confirmar metas e base de assinantes do serviço.",
+      "objectives": [
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "CDL_INOVACAO",
+      "krs": [
+        "OE4-RK2",
+        "OE5-RK1"
+      ],
+      "targets": [],
+      "rationale": "Centro habilitador de experimentação e implementação de soluções; medir inovação entregue e estabelecer indicadores completos, sem atribuir receitas de serviços ainda não validados.",
+      "objectives": [
+        "OE4",
+        "OE5"
+      ]
+    },
+    {
+      "code": "CDL_JOVEM",
+      "krs": [
+        "OE3-RK2",
+        "OE2-RK4"
+      ],
+      "targets": [],
+      "rationale": "Programa de engajamento e atuação institucional, com contribuição indireta às pautas e à satisfação dos participantes; validar evidências e públicos elegíveis.",
+      "objectives": [
+        "OE3",
+        "OE2"
+      ]
+    },
+    {
+      "code": "CDL_MULHER",
+      "krs": [
+        "OE2-RK4",
+        "OE3-RK2"
+      ],
+      "targets": [],
+      "rationale": "Programa de relacionamento e conexão empresarial; validar contribuição a satisfação e pautas prioritárias, evitando supor metas comerciais não previstas.",
+      "objectives": [
+        "OE2",
+        "OE3"
+      ]
+    },
+    {
+      "code": "CERTIFICACAO_DIGITAL",
+      "krs": [
+        "OE4-RK3",
+        "OE4-RK1",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-03:R13",
+        "SRV-03:R14",
+        "SRV-03:R15",
+        "SRV-03:R16",
+        "SRV-03:R17",
+        "SRV-03:R18"
+      ],
+      "rationale": "Vinculação direta a 700 associados usuários distintos (44,44%), 3.616 emissões, receita, margem e renovação; distinguir associados usuários de quantidade de certificados emitidos.",
+      "objectives": [
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "COMERCIAL",
+      "krs": [
+        "OE2-RK1",
+        "OE2-RK2",
+        "OE2-RK3",
+        "OE2-RK5",
+        "OE1-RK2"
+      ],
+      "targets": [
+        "SRV-01:R2",
+        "SRV-01:R5",
+        "SRV-02:R7"
+      ],
+      "rationale": "Área habilitadora de aquisição, retenção, uso cruzado dos serviços, interação no CRM e receita por associado. As metas por produto são compartilhadas com os centros de serviço.",
+      "objectives": [
+        "OE2",
+        "OE1"
+      ]
+    },
+    {
+      "code": "EVENTOS",
+      "krs": [
+        "OE2-RK4",
+        "OE4-RK1",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-07:R28",
+        "SRV-07:R29",
+        "SRV-07:R30"
+      ],
+      "rationale": "Contribuição direta aos indicadores de público, receita e margem dos eventos e à satisfação dos participantes; verificar as edições do Fórum para não contar participações em duplicidade.",
+      "objectives": [
+        "OE2",
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "FINANCEIRO",
+      "krs": [
+        "OE1-RK4",
+        "OE1-RK1",
+        "OE5-RK1",
+        "OE5-RK2"
+      ],
+      "targets": [],
+      "rationale": "Centro de suporte à rentabilidade, consistência dos dados e reuniões gerenciais; seus custos não são metas próprias de um serviço do portfólio.",
+      "objectives": [
+        "OE1",
+        "OE5"
+      ]
+    },
+    {
+      "code": "FORUM_CDL",
+      "krs": [
+        "OE2-RK4",
+        "OE3-RK2",
+        "OE4-RK1"
+      ],
+      "targets": [
+        "SRV-08:R31",
+        "SRV-08:R32",
+        "SRV-08:R33"
+      ],
+      "rationale": "Evento institucional de referência: meta de participantes, receita e margem específica do Fórum. A margem de 0% orçada deve ser interpretada como cenário, não desempenho realizado.",
+      "objectives": [
+        "OE2",
+        "OE3",
+        "OE4"
+      ]
+    },
+    {
+      "code": "GOVERNANCA",
+      "krs": [
+        "OE3-RK1",
+        "OE3-RK2",
+        "OE3-RK3",
+        "OE5-RK2"
+      ],
+      "targets": [],
+      "rationale": "Contribuição direta a representatividade, pautas institucionais e ciclo de gestão, com evidências de atas e decisões; sem meta de serviço atribuída artificialmente.",
+      "objectives": [
+        "OE3",
+        "OE5"
+      ]
+    },
+    {
+      "code": "INFRAESTRUTURA",
+      "krs": [
+        "OE1-RK4",
+        "OE4-RK1"
+      ],
+      "targets": [],
+      "rationale": "Suporte transversal: eficiência de recursos e capacidade de operação dos serviços. Relação indireta, exigindo comprovação de custos e direcionadores de rateio.",
+      "objectives": [
+        "OE1",
+        "OE4"
+      ]
+    },
+    {
+      "code": "LOCACAO_ESPACOS",
+      "krs": [
+        "OE4-RK3",
+        "OE4-RK1",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-04:R19",
+        "SRV-04:R20",
+        "SRV-04:R21",
+        "SRV-04:R22"
+      ],
+      "rationale": "Vinculação direta à meta de 200 associados usuários, utilização, receita e margem de locações. Não confundir usuários distintos com número de locações.",
+      "objectives": [
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "MARKETING",
+      "krs": [
+        "OE2-RK4",
+        "OE2-RK5",
+        "OE2-RK3"
+      ],
+      "targets": [],
+      "rationale": "Suporte à experiência, comunicação, relacionamento e adoção de múltiplos serviços; as metas finais pertencem aos processos de relacionamento e soluções.",
+      "objectives": [
+        "OE2"
+      ]
+    },
+    {
+      "code": "MENSALIDADES_E_ASSOCIACOES",
+      "krs": [
+        "OE2-RK1",
+        "OE2-RK2",
+        "OE2-RK3",
+        "OE1-RK2",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-01:R2",
+        "SRV-01:R3",
+        "SRV-01:R4",
+        "SRV-01:R5",
+        "SRV-01:R6"
+      ],
+      "rationale": "Vínculo direto à carteira-meta de 1.575 associados, receita, margem, churn e inadimplência; confirmar definição de base e competência dos indicadores.",
+      "objectives": [
+        "OE2",
+        "OE1"
+      ]
+    },
+    {
+      "code": "REVISTA",
+      "krs": [
+        "OE4-RK1",
+        "OE4-RK4",
+        "OE1-RK1"
+      ],
+      "targets": [
+        "SRV-06:R25",
+        "SRV-06:R26",
+        "SRV-06:R27"
+      ],
+      "rationale": "Revisão de saúde e posicionamento da Revista, confrontando receita, margem e inadimplência à decisão documentada de manter, ampliar, renegociar ou substituir.",
+      "objectives": [
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "SERVICOS_DE_TERCEIROS",
+      "krs": [
+        "OE4-RK1",
+        "OE4-RK4",
+        "OE1-RK3"
+      ],
+      "targets": [
+        "SRV-05:R23",
+        "SRV-05:R24"
+      ],
+      "rationale": "Solução de terceiros vinculada à receita diversificada e à margem, com necessidade de análise de contratos, custos e manutenção ou revisão do portfólio.",
+      "objectives": [
+        "OE4",
+        "OE1"
+      ]
+    },
+    {
+      "code": "SPC_BRASIL",
+      "krs": [
+        "OE4-RK3",
+        "OE4-RK1",
+        "OE1-RK1",
+        "OE2-RK3"
+      ],
+      "targets": [
+        "SRV-02:R7",
+        "SRV-02:R8",
+        "SRV-02:R9",
+        "SRV-02:R10",
+        "SRV-02:R11",
+        "SRV-02:R12"
+      ],
+      "rationale": "Vínculo direto ao crescimento de 952 usuários SPC, uso da carteira, receita, margem, churn e inadimplência; distinguir uso efetivo de contratação.",
+      "objectives": [
+        "OE4",
+        "OE1",
+        "OE2"
+      ]
+    },
+    {
+      "code": "TECNOLOGIA_DA_INFORMACAO",
+      "krs": [
+        "OE5-RK4",
+        "OE5-RK1",
+        "OE4-RK2"
+      ],
+      "targets": [],
+      "rationale": "Tecnologia é centro habilitador da integridade e disponibilidade de indicadores, automação e melhorias; evidenciar entregas, disponibilidade e dependências antes de atribuir resultado comercial direto.",
+      "objectives": [
+        "OE5",
+        "OE4"
+      ]
+    },
+    {
+      "code": "TRANSPORTE",
+      "krs": [
+        "OE1-RK4"
+      ],
+      "targets": [],
+      "rationale": "Despesa de suporte operacional à eficiência e ao resultado financeiro; não possui indicador específico na matriz de serviços, por isso o vínculo é indireto e deve ser validado.",
+      "objectives": [
+        "OE1"
+      ]
+    }
+  ]
+}
