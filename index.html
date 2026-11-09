@@ -26,7 +26,7 @@
 <section id="pacotes" class="tab hidden"><div class="eyebrow">Gestão por centro de custo</div><h1>Pacotes de decisão</h1><p class="subtitle">Detalhamento mensal, justificativas, alternativas e tramitação.</p><div class="toolbar"><label>Centro de custo<select id="centers"></select></label><label>Buscar rubrica<input id="search" placeholder="Descrição ou código"></label><label>Classificação<select id="filter"><option value="all">Todas as rubricas</option><option value="revenue">Receitas</option><option value="expense">Despesas</option></select></label><label>Situação da análise<select id="analysisFilter"><option value="all">Todas</option><option value="pending">Sem justificativa</option><option value="done">Justificadas</option></select></label><button id="refresh" class="action secondary">Atualizar dados</button></div><div id="empty" class="note hidden">Pacote cadastrado, mas ainda sem rubricas importadas. Os valores não representam orçamento zero. <a id="emptyAdmin" href="./importacao.html" class="hidden">Importar dados</a></div><div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="card kpi"><small>Receita do pacote</small><strong id="revenue">—</strong></div><div class="card kpi"><small>Despesa do pacote</small><strong id="expense">—</strong></div><div class="card kpi"><small>Resultado do pacote</small><strong id="balance">—</strong></div></div><div class="card" id="strategyCard">
 <div class="sectionHead"><h2>Alinhamento estratégico do pacote</h2><span class="pill" id="strategyCount">0 vínculos</span></div>
 <p class="muted">Relacione este pacote aos objetivos estratégicos, resultados-chave (RK) e às metas da Matriz de Gestão do Portfólio 2027. Um pacote pode contribuir para várias metas. A vinculação não altera os valores financeiros nem multiplica custos.</p>
-<div id="strategySummary" class="strategy-summary" role="status">Carregando vínculos...</div>
+<div id="strategySuggestion" class="strategy-summary hidden"><strong>Enquadramento sugerido para validação</strong><p id="strategySuggestionNote" class="muted"></p><p id="strategySuggestionDetails" class="muted"></p><button id="strategyLoadSuggestion" class="action secondary">Carregar sugestão para conferência</button><p class="muted" style="margin-bottom:0">Carregar não grava nada. Revise as seleções abaixo e clique em <strong>Salvar todos os vínculos do pacote</strong> para confirmá-las.</p></div><div id="strategySummary" class="strategy-summary" role="status">Carregando vínculos...</div>
 <div class="strategy-grid">
 <div class="strategy-panel"><h3>1. Objetivos estratégicos</h3><p class="muted">OE1 a OE6</p><div class="strategy-picks" id="strategyObjectives"></div></div>
 <div class="strategy-panel"><h3>2. Resultados-chave</h3><p class="muted">24 RKs vinculados aos objetivos</p><div class="strategy-picks" id="strategyKrs"></div></div>
@@ -60,7 +60,7 @@
 </section><p class="foot">CDL Novo Hamburgo · OBZ 2027 · Homologação. Premissas fiscais e créditos são projeções sujeitas à validação contábil.</p><p id="message" role="status"></p></main></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script>
 'use strict';
-const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false;
+const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false,strategySuggestion=null;
 function notice(s,error=false){$('message').textContent=s;$('message').className=error?'error':''}
 function tab(id){if(strategyDirty()&&id!=='pacotes'&&!confirm('Há vínculos estratégicos não salvos neste pacote. Sair da aba sem salvar?'))return false;if(document.querySelector('#alcadas.tab:not(.hidden)')&&id!=='alcadas'&&aclChanges().length&&!confirm('Você tem alterações de responsáveis não salvas. Deseja sair desta aba sem salvar?'))return false;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==id));return true}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(!tab(b.dataset.tab))return;if(b.dataset.tab==='alcadas')history.replaceState(null,'','#alcadas');else if(window.location.hash==='#alcadas')history.replaceState(null,'',window.location.pathname+window.location.search)});
@@ -99,6 +99,7 @@ function strategyDirty(){if(!strategyReady)return false;return ['objectives','kr
 })}
 function strategyEditable(){return !!current&&['draft','changes_requested'].includes(current.status)&&!!profile}
 function strategyUpdateStatus(){
+ if(strategySuggestion)$('strategyLoadSuggestion').disabled=!strategyReady||!strategyEditable()||strategySaving;
  const selected=[strategyDraft.objectives.size,strategyDraft.krs.size,strategyDraft.portfolio.size];
  $('strategyCount').textContent=selected.reduce((a,b)=>a+b,0)+' vínculos';
  $('strategySummary').textContent=selected[0]+' objetivo(s), '+selected[1]+' resultado(s)-chave e '+selected[2]+' meta(s) do portfólio vinculados nesta seleção.';
@@ -132,13 +133,15 @@ function strategyRender(){
  }
  strategyUpdateStatus()
 }
+function strategyRenderSuggestion(){const box=$('strategySuggestion');box.classList.toggle('hidden',!strategySuggestion);if(!strategySuggestion)return;const p=strategySuggestion;$('strategySuggestionNote').textContent=p.rationale;$('strategySuggestionDetails').textContent=p.objectives.length+' objetivo(s), '+p.krs.length+' resultado(s)-chave e '+p.portfolio_keys.length+' meta(s) sugeridos. Enquadramento proposto — sujeito à validação do responsável.';$('strategyLoadSuggestion').disabled=!strategyReady||!strategyEditable()||strategySaving;}
+$('strategyLoadSuggestion').onclick=()=>{if(!strategyReady||!strategySuggestion||!strategyEditable())return;if(strategyDirty()&&!confirm('Substituir suas seleções ainda não salvas pela proposta de enquadramento?'))return;const p=strategySuggestion;strategyDraft={objectives:new Set(p.objectives),krs:new Set(p.krs),portfolio:new Set(p.portfolio_keys)};for(const k of strategyCatalog.krs){if(strategyDraft.krs.has(k.code))strategyDraft.objectives.add(k.objective_code)}strategyRender();$('strategyFeedback').textContent='Proposta carregada para conferência. Nenhum vínculo foi salvo.';}
 async function loadStrategyForCenter(){
  const id=current?.id;
  if(!id)return;
- if(strategyCenterId===id&&strategyDirty()){strategyRender();return}
+ if(strategyCenterId===id&&strategyDirty()){strategyRender();strategyRenderSuggestion();return}
  strategyReady=false;strategyCenterId=id;
  $('strategySummary').textContent='Carregando vínculos do pacote...';
- const r=await db.from('obz_center_strategy_links').select('objective_code,kr_code,portfolio_key').eq('center_id',id);
+ const [r,p]=await Promise.all([db.from('obz_center_strategy_links').select('objective_code,kr_code,portfolio_key').eq('center_id',id),db.from('obz_center_strategy_proposals').select('objectives,krs,portfolio_keys,rationale').eq('center_id',id).maybeSingle()]);
  if(current?.id!==id)return;
  if(r.error){notice('Não foi possível consultar os vínculos estratégicos: '+r.error.message,true);$('strategySummary').textContent='Vínculos indisponíveis.';return}
  const saved={objectives:new Set(),krs:new Set(),portfolio:new Set()};
@@ -147,23 +150,23 @@ async function loadStrategyForCenter(){
   if(link.kr_code)saved.krs.add(link.kr_code);
   if(link.portfolio_key)saved.portfolio.add(link.portfolio_key)
  }
- strategySaved=saved;strategyDraft=strategyClone(saved);strategyReady=true;strategyRender()
+ strategySaved=saved;strategyDraft=strategyClone(saved);strategySuggestion=p.error?null:p.data;strategyReady=true;strategyRender();strategyRenderSuggestion()
 }
 $('strategySave').onclick=async()=>{
  if(!strategyReady||!strategyDirty()||!strategyEditable()||strategySaving)return;
  const id=current.id,desired=strategyClone(strategyDraft);
  if(!confirm('Salvar os vínculos estratégicos do pacote '+current.name+'?'))return;
- strategySaving=true;strategyRender();
+ strategySaving=true;strategyRender();strategyRenderSuggestion();
  let result;
  try{result=await db.rpc('obz_save_center_strategy',{p_center:id,p_objectives:[...desired.objectives],p_krs:[...desired.krs],p_portfolio:[...desired.portfolio]})}
  catch(error){result={error:{message:error.message||'Falha de conexão'}}}
- strategySaving=false;
+ strategySaving=false;strategyRenderSuggestion();
  if(result.error){$('strategyFeedback').textContent='Nenhum vínculo foi alterado: '+result.error.message;notice('Não foi possível salvar: '+result.error.message,true);strategyRender();return}
  if(current?.id!==id)return;
  strategySaved=strategyClone(desired);
  strategyDraft=strategyClone(desired);
  strategyRender();
- $('strategyFeedback').textContent='Vínculos salvos e auditados com sucesso.';
+ $('strategyFeedback').textContent='Enquadramento validado pelo responsável e vínculos auditados com sucesso.';
  await loadStrategyForCenter();await loadAudit();if(profile.role==='admin')await loadConsolidated();
  notice('Vínculos estratégicos do pacote atualizados.')
 };
