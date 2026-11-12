@@ -237,7 +237,132 @@ $('centers').onchange=async()=>{if(strategyDirty()&&$('centers').value!==strateg
 function statusLabel(s){return({draft:'Rascunho',submitted:'Submetido',in_review:'Em revisão',changes_requested:'Ajustes solicitados',approved:'Aprovado'})[s]||s}
 async function chooseCenter(){current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key').eq('center_id',current.id).order('description');if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
-function renderLines(){const tbody=$('lines');tbody.replaceChildren();const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;for(const x of lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(x.justification||'').trim())))){const tr=document.createElement('tr');for(const [value,isNumber] of [[x.description,false],[x.category==='revenue'?'Receita':'Despesa',false],[br(annual(x)),true],[String(x.justification||'').trim()?'Justificada':'Pendente',false]]){const td=document.createElement('td');td.textContent=value;if(isNumber)td.className='num';tr.append(td)}const td=document.createElement('td'),b=document.createElement('button');b.className='action secondary';b.textContent='Analisar';b.onclick=()=>editLine(x);td.append(b);tr.append(td);tbody.append(tr)}if(!tbody.children.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Nenhuma rubrica encontrada.';tr.append(td);tbody.append(tr)}}
+const REVIEW_FIELDS=['justification','alternative','intermediate_action','intermediate_annual','intermediate_consequence','severe_action','severe_annual','severe_consequence'];
+const REVIEW_ACTIONS=[['','Não definido'],['manter','Manter'],['reduzir','Reduzir'],['ampliar','Ampliar'],['eliminar','Eliminar'],['substituir','Substituir']];
+function reviewCanonical(field,value){
+ if(field.endsWith('_annual')){if(value===null||value===undefined||String(value).trim()==='')return '';const n=Number(value);return Number.isFinite(n)?n.toFixed(2):'inválido:'+value}
+ return String(value??'')
+}
+function reviewValue(x,field){const draft=reviewDrafts.get(x.id);return draft&&Object.prototype.hasOwnProperty.call(draft,field)?draft[field]:x[field]}
+function reviewLineDirty(x){return REVIEW_FIELDS.some(field=>reviewCanonical(field,reviewValue(x,field))!==reviewCanonical(field,x[field]))}
+function reviewChanges(){return lines.filter(reviewLineDirty)}
+function reviewEditable(){return !!current&&['draft','changes_requested'].includes(current.status)&&!reviewSaving}
+function reviewScenarioComplete(x,prefix){const d=reviewValue(x,prefix+'_action'),annualValue=reviewValue(x,prefix+'_annual'),consequence=reviewValue(x,prefix+'_consequence');return !!d&&reviewCanonical(prefix+'_annual',annualValue)!==''&&!!String(consequence||'').trim()}
+function reviewStatusText(x){return (String(reviewValue(x,'justification')||'').trim()?'✓ Justificada':'○ Sem justificativa')+' · '+(reviewScenarioComplete(x,'intermediate')?'✓ Inter.':'○ Inter.')+' · '+(reviewScenarioComplete(x,'severe')?'✓ Severo':'○ Severo')}
+function reviewRefreshCounts(){
+ const pending=reviewChanges().length;
+ $('reviewPending').textContent=pending?pending+' rubrica(s) com alterações ainda não salvas.':'Nenhuma alteração pendente.';
+ $('reviewSaveAll').disabled=!pending||!reviewEditable();$('reviewSaveBottom').disabled=!pending||!reviewEditable();
+ $('reviewDiscard').disabled=!pending||reviewSaving;
+ const values={base:0,intermediate:0,severe:0},completed={intermediate:0,severe:0};
+ for(const x of lines){
+  const base=annual(x),sign=x.category==='revenue'?1:-1;values.base+=sign*base;
+  for(const prefix of ['intermediate','severe']){
+   const annualValue=reviewValue(x,prefix+'_annual'),chosen=annualValue===null||annualValue===undefined||String(annualValue).trim()===''?base:Number(annualValue);
+   values[prefix]+=sign*(Number.isFinite(chosen)?chosen:base);
+   if(reviewScenarioComplete(x,prefix))completed[prefix]++;
+  }
+ }
+ $('reviewBaseResult').textContent=br(values.base);$('reviewIntermediateResult').textContent=br(values.intermediate);$('reviewSevereResult').textContent=br(values.severe);
+ $('reviewIntermediateProgress').textContent=completed.intermediate+' de '+lines.length+' rubricas com ação, valor e consequência';
+ $('reviewSevereProgress').textContent=completed.severe+' de '+lines.length+' rubricas com ação, valor e consequência';
+}
+function reviewMutate(x,field,value,tr){
+ const update={};for(const k of REVIEW_FIELDS)update[k]=reviewValue(x,k);
+ update[field]=value;
+ if(field.endsWith('_action')){
+  const prefix=field.replace('_action','');
+  if(value==='manter')update[prefix+'_annual']=annual(x).toFixed(2);
+  if(value==='eliminar')update[prefix+'_annual']='0.00';
+  if(value==='')update[prefix+'_annual']='';
+  const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');if(amount)amount.value=update[prefix+'_annual']===null?'':update[prefix+'_annual'];
+ }
+ reviewDrafts.set(x.id,update);
+ if(!reviewLineDirty(x))reviewDrafts.delete(x.id);
+ tr.classList.toggle('reviewChanged',reviewLineDirty(x));
+ const status=tr.querySelector('[data-review-status]');if(status)status.textContent=reviewStatusText(x);
+ $('reviewFeedback').textContent='O pacote possui alterações em edição. Use Salvar todas as alterações.';
+ reviewRefreshCounts()
+}
+function reviewScenarioOptions(x,tr,prefix){
+ const container=document.createElement('div');
+ const sel=document.createElement('select');sel.className='reviewSelect';sel.dataset.field=prefix+'_action';sel.setAttribute('aria-label',(prefix==='intermediate'?'Ação intermediária':'Ação severa')+' — '+x.description);
+ for(const [v,label] of REVIEW_ACTIONS){const o=document.createElement('option');o.value=v;o.textContent=label;sel.append(o)}
+ sel.value=reviewValue(x,prefix+'_action')||'';sel.disabled=!reviewEditable();
+ sel.onchange=()=>reviewMutate(x,prefix+'_action',sel.value,tr);
+ const label=document.createElement('label');label.className='reviewAmountLabel';label.textContent='Valor anual (R$)';
+ const inp=document.createElement('input');inp.className='reviewAmount';inp.dataset.field=prefix+'_annual';inp.type='number';inp.step='0.01';inp.placeholder='A definir';inp.value=reviewValue(x,prefix+'_annual')??'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Valor anual '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.oninput=()=>reviewMutate(x,prefix+'_annual',inp.value,tr);
+ container.append(sel,label,inp);return container
+}
+function reviewConsequenceInput(x,tr,prefix){
+ const inp=document.createElement('textarea');inp.className='reviewConsequence';inp.rows=2;inp.maxLength=2000;inp.placeholder='Impacto na entrega, equipe, atendimento ou meta...';inp.value=reviewValue(x,prefix+'_consequence')||'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Consequência do cenário '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.oninput=()=>reviewMutate(x,prefix+'_consequence',inp.value,tr);return inp
+}
+function reviewDetail(x){
+ const detail=document.createElement('tr');detail.className='reviewDetails';detail.dataset.lineDetail=x.id;
+ const td=document.createElement('td');td.colSpan=8;const grid=document.createElement('div');grid.className='reviewDetailGrid';
+ for(const [field,title,placeholder] of [['justification','Justificativa técnica e operacional','Necessidade, premissas do custo, entregas, risco de não executar e relação com os RKs'],['alternative','Alternativas adicionais / redesenho','Opções de renegociação, compartilhamento, substituição e seus impactos']]){
+  const label=document.createElement('label');label.textContent=title;const input=document.createElement('textarea');input.rows=3;input.maxLength=4000;input.value=reviewValue(x,field)||'';input.placeholder=placeholder;input.disabled=!reviewEditable();input.setAttribute('aria-label',title+' — '+x.description);
+  input.oninput=()=>{const main=td.parentNode.previousElementSibling;reviewMutate(x,field,input.value,main)};label.append(input);grid.append(label)
+ }
+ td.append(grid);
+ const info=document.createElement('p');info.className='reviewMini';info.textContent='Os valores da base 2027 continuam preservados. Os ajustes intermediário e severo são propostas separadas, não substituições da Planilha Mestra.';td.append(info);
+ if(profile?.role==='admin'){
+  const btn=document.createElement('button');btn.className='action secondary';btn.style.marginTop='8px';btn.textContent='Edição avançada dos 12 meses (somente admin)';
+  btn.onclick=()=>{if(reviewChanges().length&&!confirm('Há análises não salvas. Antes de editar a base mensal, salve ou descarte as revisões. Continuar poderá perder esses ajustes.'))return;editLine(x)};
+  td.append(btn)
+ }
+ detail.append(td);return detail
+}
+function renderLines(){
+ const tbody=$('lines');tbody.replaceChildren();
+ const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;
+ const visible=lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(reviewValue(x,'justification')||'').trim())));
+ for(const x of visible){
+  const tr=document.createElement('tr');tr.dataset.lineId=x.id;tr.classList.toggle('reviewChanged',reviewLineDirty(x));
+  const tdName=document.createElement('td');tdName.className='reviewName';
+  const toggle=document.createElement('button');toggle.className='action secondary reviewExpand';toggle.textContent=reviewExpanded.has(x.id)?'▾ Fechar justificativa':'▸ Justificativa da rubrica';toggle.setAttribute('aria-expanded',reviewExpanded.has(x.id)?'true':'false');
+  toggle.onclick=()=>{if(reviewExpanded.has(x.id))reviewExpanded.delete(x.id);else reviewExpanded.add(x.id);renderLines()};
+  const name=document.createElement('div');name.textContent=x.description;
+  tdName.append(toggle,name);tr.append(tdName);
+  const type=document.createElement('td');type.textContent=x.category==='revenue'?'Receita':'Despesa';tr.append(type);
+  const amount=document.createElement('td');amount.textContent=br(annual(x));amount.className='reviewValue';tr.append(amount);
+  const status=document.createElement('td');status.className='reviewStatus';status.dataset.reviewStatus='true';status.textContent=reviewStatusText(x);tr.append(status);
+  for(const prefix of ['intermediate','severe']){
+   const options=document.createElement('td');options.append(reviewScenarioOptions(x,tr,prefix));tr.append(options);
+   const consequence=document.createElement('td');consequence.append(reviewConsequenceInput(x,tr,prefix));tr.append(consequence)
+  }
+  tbody.append(tr);if(reviewExpanded.has(x.id))tbody.append(reviewDetail(x))
+ }
+ if(!visible.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=8;td.textContent='Nenhuma rubrica encontrada para os filtros atuais.';tr.append(td);tbody.append(tr)}
+ reviewRefreshCounts()
+}
+async function saveReviews(){
+ if(reviewSaving||!reviewEditable())return;const changed=reviewChanges();if(!changed.length)return;
+ const payload=[];
+ for(const x of changed){
+  const d={};for(const field of REVIEW_FIELDS)d[field]=reviewValue(x,field);
+  for(const prefix of ['intermediate','severe']){
+   const raw=d[prefix+'_annual'],value=raw===null||raw===undefined||String(raw).trim()===''?null:Number(raw);
+   if(value!==null&&(!Number.isFinite(value)||Math.abs(value)>99999999999999))return notice('Valor anual inválido na rubrica: '+x.description,true);
+   if(value!==null&&!d[prefix+'_action'])return notice('Selecione a ação de '+prefix+' para '+x.description,true);
+   if(d[prefix+'_action']==='eliminar'&&value!==null&&Math.abs(value)>0.001)return notice('Eliminar exige valor anual igual a zero: '+x.description,true);
+   d[prefix+'_annual']=value
+  }
+  payload.push({line_id:x.id,line_updated_at:x.updated_at,scenario_updated_at:x.scenario_updated_at||null,...d})
+ }
+ reviewSaving=true;renderLines();$('reviewFeedback').textContent='Salvando '+payload.length+' rubrica(s)...';
+ let result;
+ try{result=await db.rpc('obz_save_line_scenario_reviews',{p_center:current.id,p_reviews:payload})}
+ catch(error){result={error:{message:error.message||'Falha de comunicação'}}}
+ reviewSaving=false;
+ if(result.error){renderLines();$('reviewFeedback').textContent='Nenhuma rubrica do lote foi alterada: '+result.error.message;notice('Falha ao salvar revisões: '+result.error.message,true);return}
+ reviewDrafts.clear();
+ await chooseCenter();
+ $('reviewFeedback').textContent=Number(result.data)+' rubrica(s) salvas com sucesso, com auditoria.';
+ notice('Análises salvas no Supabase. Esforço máximo 2027 preservado.')
+}
+$('reviewSaveAll').onclick=saveReviews;$('reviewSaveBottom').onclick=saveReviews;
+$('reviewDiscard').onclick=()=>{if(!reviewChanges().length)return;if(!confirm('Descartar todas as alterações ainda não salvas deste pacote?'))return;reviewDrafts.clear();renderLines();$('reviewFeedback').textContent='Alterações locais descartadas.'};
 async function checkMasterSource(force=false){
  if(!db||profile?.role!=='admin'||masterChecking)return;
  if(!force&&Date.now()-masterLastAttempt<10*60*1000)return;
