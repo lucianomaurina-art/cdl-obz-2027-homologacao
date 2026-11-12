@@ -593,8 +593,10 @@ $('baseUndoJanuary').onclick=()=>{
 $('editForm').onsubmit=async e=>{
  e.preventDefault();
  if(!editing||!current||profile?.role!=='admin'||!reviewEditable())return notice('Sem permissão para alterar a base mensal.',true);
- const values=[...document.querySelectorAll('#months [data-month]')].map(x=>Number(x.value));
- if(values.length!==12||values.some(x=>!Number.isFinite(x)))return notice('Valores mensais inválidos.',true);
+ const baseInputs=[...document.querySelectorAll('#months [data-month]')];
+ if(baseInputs.length!==12||baseInputs.some(input=>input.value.trim()===''))return notice('Informe os 12 valores mensais da base antes de salvar.',true);
+ const values=baseInputs.map(x=>Number(x.value));
+ if(values.some(x=>!Number.isFinite(x)))return notice('Valores mensais inválidos.',true);
  const edited=values.some((v,i)=>reviewRound(v)!==reviewRound(editing.months[i]));
  if(edited&&!confirm('Você está modificando os 12 meses da base oficial, não um cenário. Essa alteração causará divergência com a Planilha Mestra e requer atualização controlada. Confirmar?'))return;
  const {data,error}=await db.from('obz_lines')
