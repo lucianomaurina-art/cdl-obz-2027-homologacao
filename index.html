@@ -268,15 +268,39 @@ function reviewRefreshCounts(){
  $('reviewIntermediateProgress').textContent=completed.intermediate+' de '+lines.length+' rubricas com ação, valor e consequência';
  $('reviewSevereProgress').textContent=completed.severe+' de '+lines.length+' rubricas com ação, valor e consequência';
 }
+function reviewRound(value){return Math.round(Number(value)*100)/100}
+function reviewBaseMonths(x){return Array.isArray(x.months)?x.months.map(v=>Number(v||0)):Array(12).fill(0)}
+function reviewDistribute(x,target){
+ const base=reviewBaseMonths(x),cents=base.map(v=>Math.round(v*100)),year=Math.round(Number(target)*100),total=cents.reduce((a,b)=>a+b,0);
+ let split=Array(12).fill(0),sum=0;
+ for(let i=0;i<11;i++){split[i]=total?Math.round(year*cents[i]/total):Math.trunc(year/12);sum+=split[i]}
+ split[11]=year-sum;return split.map(v=>v/100)
+}
+function reviewEffectiveMonths(x,prefix){
+ const saved=reviewValue(x,prefix+'_months');
+ if(Array.isArray(saved)&&saved.length===12)return saved.map(Number);
+ const annualValue=reviewValue(x,prefix+'_annual');
+ return annualValue===null||annualValue===undefined||String(annualValue).trim()===''?reviewBaseMonths(x):reviewDistribute(x,annualValue)
+}
 function reviewMutate(x,field,value,tr){
  const update={};for(const k of REVIEW_FIELDS)update[k]=reviewValue(x,k);
  update[field]=value;
  if(field.endsWith('_action')){
   const prefix=field.replace('_action','');
-  if(value==='manter')update[prefix+'_annual']=annual(x).toFixed(2);
-  if(value==='eliminar')update[prefix+'_annual']='0.00';
-  if(value==='')update[prefix+'_annual']='';
-  const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');if(amount)amount.value=update[prefix+'_annual']===null?'':update[prefix+'_annual'];
+  if(value==='manter'){update[prefix+'_annual']=annual(x).toFixed(2);update[prefix+'_months']=null}
+  if(value==='eliminar'){update[prefix+'_annual']='0.00';update[prefix+'_months']=Array(12).fill(0)}
+  if(value===''){update[prefix+'_annual']='';update[prefix+'_months']=null}
+  const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');
+  if(amount)amount.value=update[prefix+'_annual']===null?'':update[prefix+'_annual'];
+ }
+ if(field.endsWith('_annual'))update[field.replace('_annual','')+'_months']=null;
+ if(field.endsWith('_months')){
+  const prefix=field.replace('_months','');
+  update[field]=value===null?null:value.map(v=>reviewRound(v));
+  if(Array.isArray(value)){
+   update[prefix+'_annual']=reviewRound(value.reduce((a,b)=>a+Number(b),0)).toFixed(2);
+   const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');if(amount)amount.value=update[prefix+'_annual'];
+  }
  }
  reviewDrafts.set(x.id,update);
  if(!reviewLineDirty(x))reviewDrafts.delete(x.id);
@@ -285,6 +309,44 @@ function reviewMutate(x,field,value,tr){
  $('reviewFeedback').textContent='O pacote possui alterações em edição. Use Salvar todas as alterações.';
  reviewRefreshCounts()
 }
+function reviewSetMonth(x,prefix,index,value,tr){
+ if(!Number.isFinite(Number(value)))return notice('Valor mensal inválido.',true);
+ const amounts=reviewEffectiveMonths(x,prefix);amounts[index]=reviewRound(value);
+ reviewUndo.delete(x.id+':'+prefix);reviewMutate(x,prefix+'_months',amounts,tr);
+ const label=document.querySelector('[data-monthly-total="'+x.id+':'+prefix+'"]');
+ if(label)label.textContent='Total anual deste cenário: '+br(reviewRound(amounts.reduce((a,b)=>a+b,0)))
+}
+function reviewReplicateJanuary(x,prefix,mode){
+ if(!reviewEditable())return;
+ if(!reviewValue(x,prefix+'_action'))return notice('Selecione uma ação antes de replicar os meses.',true);
+ const before=reviewValue(x,prefix+'_months'),beforeAnnual=reviewValue(x,prefix+'_annual');
+ const amounts=reviewEffectiveMonths(x,prefix),base=reviewBaseMonths(x),jan=Number(amounts[0]);
+ let proposed=Array(12).fill(0);
+ if(mode==='value')proposed.fill(reviewRound(jan));
+ if(mode==='ratio'){
+  if(Math.abs(base[0])<0.0000001)return notice('A base de janeiro é zero. Utilize mesmo valor ou diferença em R$.',true);
+  const ratio=jan/base[0];proposed=base.map(v=>reviewRound(v*ratio))
+ }
+ if(mode==='delta'){
+  const delta=jan-base[0];proposed=base.map(v=>reviewRound(v+delta))
+ }
+ proposed[0]=reviewRound(jan);
+ const yearly=reviewRound(proposed.reduce((a,b)=>a+b,0));
+ const modeLabel={value:'o mesmo valor de janeiro',ratio:'a mesma variação percentual sobre cada mês da base',delta:'a mesma diferença em reais aplicada a janeiro'}[mode];
+ const prompt='Aplicar '+modeLabel+' de fevereiro a dezembro?\n\nJaneiro proposto: '+br(jan)+'\nTotal anual proposto: '+br(yearly)+'\nDiferença sobre a base anual: '+br(yearly-annual(x))+'\n\nOs dados só serão gravados ao clicar em Salvar todas as alterações.';
+ if(!confirm(prompt))return;
+ reviewUndo.set(x.id+':'+prefix,{months:Array.isArray(before)?[...before]:null,annual:beforeAnnual});
+ const tr=document.querySelector('[data-line-id="'+x.id+'"]');if(!tr)return;
+ reviewMutate(x,prefix+'_months',proposed,tr);renderLines();
+ $('reviewFeedback').textContent='Janeiro replicado. Confira os 12 meses antes de salvar.'
+}
+function reviewUndoReplicate(x,prefix){
+ const key=x.id+':'+prefix,before=reviewUndo.get(key);if(!before)return;
+ const update={};for(const k of REVIEW_FIELDS)update[k]=reviewValue(x,k);
+ update[prefix+'_months']=before.months;update[prefix+'_annual']=before.annual;
+ reviewDrafts.set(x.id,update);if(!reviewLineDirty(x))reviewDrafts.delete(x.id);
+ reviewUndo.delete(key);renderLines();$('reviewFeedback').textContent='Replicação desfeita antes de salvar.'
+}
 function reviewScenarioOptions(x,tr,prefix){
  const container=document.createElement('div');
  const sel=document.createElement('select');sel.className='reviewSelect';sel.dataset.field=prefix+'_action';sel.setAttribute('aria-label',(prefix==='intermediate'?'Ação intermediária':'Ação severa')+' — '+x.description);
@@ -292,7 +354,7 @@ function reviewScenarioOptions(x,tr,prefix){
  sel.value=reviewValue(x,prefix+'_action')||'';sel.disabled=!reviewEditable();
  sel.onchange=()=>reviewMutate(x,prefix+'_action',sel.value,tr);
  const label=document.createElement('label');label.className='reviewAmountLabel';label.textContent='Valor anual (R$)';
- const inp=document.createElement('input');inp.className='reviewAmount';inp.dataset.field=prefix+'_annual';inp.type='number';inp.step='0.01';inp.placeholder='A definir';inp.value=reviewValue(x,prefix+'_annual')??'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Valor anual '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.oninput=()=>reviewMutate(x,prefix+'_annual',inp.value,tr);
+ const inp=document.createElement('input');inp.className='reviewAmount';inp.dataset.field=prefix+'_annual';inp.type='number';inp.step='0.01';inp.placeholder='A definir';inp.value=reviewValue(x,prefix+'_annual')??'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Valor anual '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.onchange=()=>{const existing=reviewValue(x,prefix+'_months');if(Array.isArray(existing)&&!confirm('Alterar o total anual apagará a distribuição mensal detalhada deste cenário. Continuar?')){inp.value=reviewValue(x,prefix+'_annual')??'';return}reviewUndo.delete(x.id+':'+prefix);reviewMutate(x,prefix+'_annual',inp.value,tr);if(reviewExpanded.has(x.id))renderLines()};
  container.append(sel,label,inp);return container
 }
 function reviewConsequenceInput(x,tr,prefix){
