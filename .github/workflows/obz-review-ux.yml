@@ -1,0 +1,25 @@
+name: OBZ 2027 - revisão de rubricas e cenários
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'tests/obz-review-scenarios.test.mjs'
+      - '.github/workflows/obz-review-ux.yml'
+  push:
+    branches:
+      - feature/obz-analise-cenarios-por-rubrica
+    paths:
+      - 'index.html'
+      - 'tests/obz-review-scenarios.test.mjs'
+      - '.github/workflows/obz-review-ux.yml'
+permissions:
+  contents: read
+jobs:
+  scenario-ux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/obz-review-scenarios.test.mjs
