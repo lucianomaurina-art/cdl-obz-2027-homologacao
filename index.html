@@ -68,6 +68,22 @@
 .reviewMonthInput{width:100px;padding:6px;font-size:11px;text-align:right}
 .reviewMonthTotal{display:block;text-align:right;margin-top:10px;color:#214e77;font-size:13px}
 @media(max-width:1180px){.reviewMonthGrid{grid-template-columns:1fr}}
+#packagePrint {display:none}
+@media print {
+  @page {size:A4 landscape; margin:14mm}
+  body.printing-package {display:block; margin:0; background:white; color:#182e42}
+  body.printing-package > :not(#packagePrint) {display:none !important}
+  body.printing-package #packagePrint {display:block; font:10pt/1.35 system-ui,sans-serif}
+  #packagePrint h1 {font-size:24pt; margin:4mm 0 1mm}
+  #packagePrint h2 {font-size:14pt; margin:6mm 0 2mm; break-after:avoid}
+  #packagePrint p {margin:1mm 0}
+  #packagePrint table {width:100%; border-collapse:collapse; table-layout:fixed}
+  #packagePrint thead {display:table-header-group}
+  #packagePrint th, #packagePrint td {padding:2mm; border:1px solid #becbd6; text-align:left; vertical-align:top; overflow-wrap:anywhere}
+  #packagePrint th {font-weight:750; background:#e8eff5; print-color-adjust:exact}
+  #packagePrint tr {break-inside:avoid}
+  #packagePrint .print-note {white-space:pre-wrap}
+}
 </style></head><body><header><div><strong>CDL Novo Hamburgo <span style="opacity:.55">/</span> OBZ 2027</strong><small>Gestão Orçamentária · Orçamento Base Zero</small></div><div class="right"><span class="pill">HOMOLOGAÇÃO</span><span id="who" class="user"></span><button id="logout" class="action secondary hidden">Sair</button></div></header>
 <div id="login" class="auth card"><div class="eyebrow">Acesso restrito</div><h2>Entrar na plataforma</h2><p class="muted">Utilize seu acesso da Plataforma de Demandas CDL.</p><form id="loginForm"><label>E-mail<input type="email" name="email" autocomplete="username" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><button class="action" style="width:100%">Entrar</button></form></div>
 <div id="workspace" class="shell hidden"><aside><div class="asideTitle">PLANEJAMENTO 2027</div><button class="nav active" data-tab="painel">Painel executivo</button><button class="nav" data-tab="pacotes">Pacotes de decisão</button><button class="nav" data-tab="cenarios">Cenários</button><button class="nav" data-tab="governanca">Governança</button><button class="nav hidden" data-tab="alcadas">Alçadas e Cadastros</button><div class="asideTitle">FERRAMENTAS</div><a id="adminLink" class="nav hidden" href="./importacao.html" style="display:block;text-decoration:none">↥ &nbsp; Atualização controlada (CSV)</a></aside><main class="content">
@@ -108,7 +124,7 @@
 <th rowspan="2">Rubrica / justificativa</th><th rowspan="2">Tipo</th><th rowspan="2" class="num">Esforço máximo<br><small>Base anual 2027</small></th><th rowspan="2">Situação da análise</th>
 <th colspan="2" class="reviewGroup">Cenário intermediário</th><th colspan="2" class="reviewGroup">Cenário severo</th></tr>
 <tr><th>Ação e valor anual</th><th>Consequência do ajuste</th><th>Ação e valor anual</th><th>Consequência do ajuste</th></tr></thead><tbody id="lines"></tbody></table></div>
-<div class="reviewControls"><span id="reviewFeedback" class="muted" role="status">Revise as rubricas e salve as alterações do pacote em um único lote.</span><button id="reviewSaveBottom" class="action" disabled>Salvar alterações do pacote</button></div>
+<div class="reviewControls"><span id="reviewFeedback" class="muted" role="status">Revise as rubricas e salve as alterações do pacote em um único lote.</span><button id="reviewSaveBottom" class="action" disabled>Salvar alterações do pacote</button><button id="exportPackagePdf" class="action secondary" disabled>Exportar pacote em PDF</button></div>
 </div><div id="editor" class="card hidden"><h2>Edição excepcional dos valores mensais (administração)</h2><p class="muted">Ajuste a base mensal somente quando autorizado. A análise rotineira de justificativas e cenários fica diretamente na tabela acima.</p><p id="lineTitle" class="muted"></p><form id="editForm"><h3>Distribuição mensal — base oficial</h3><p class="muted">Somente a administração pode alterar a base. Alterações neste formulário gerarão diferenças em relação à Planilha Mestra e devem ter autorização. A revisão normal é feita na tabela acima.</p>
 <div class="reviewControls"><label>Replicar janeiro como<select id="baseJanuaryMode"><option value="ratio">Mesma variação percentual</option><option value="value">Mesmo valor mensal</option><option value="delta">Mesma diferença em reais</option></select></label><button type="button" id="baseRepeatJanuary" class="action secondary">Replicar janeiro na base</button><button type="button" id="baseUndoJanuary" class="action secondary" disabled>Desfazer replicação</button></div><div id="baseReplicateNotice" class="reviewMini" role="status"></div>
 <div id="months" class="monthly"></div><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div></section>
@@ -134,6 +150,7 @@
 <tr><td>Colaborador</td><td>Somente se for designado responsável</td><td>Mesma regra operacional do responsável designado</td><td>Submeter, se designado</td></tr>
 </tbody></table></div><p class="muted">Esta matriz apresenta as permissões atualmente implementadas. A parametrização da alçada de aprovação por valor ou por cargo ainda não faz parte do modelo de dados.</p></div>
 </section><p class="foot">CDL Novo Hamburgo · OBZ 2027 · Homologação. Premissas fiscais e créditos são projeções sujeitas à validação contábil.</p><p id="message" role="status"></p></main></div>
+<article id="packagePrint" aria-hidden="true"></article>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script>
 'use strict';
 const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,dashboardRows=[],masterChecking=false,masterLastAttempt=0,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false,strategySuggestion=null,reviewDrafts=new Map(),reviewExpanded=new Set(),reviewUndo=new Map(),reviewSaving=false,baseJanuaryUndo=null;
@@ -252,8 +269,9 @@ window.addEventListener('beforeunload',e=>{if((reviewChanges().length&&!reviewSa
 async function loadCenters(){const r=await db.from('obz_centers').select('id,name,status,manager_id').eq('fiscal_year',2027).order('name');if(r.error)return notice('Erro ao carregar pacotes: '+r.error.message,true);centers=r.data||[];for(const c of centers){if(aclDrafts.has(c.id)&&aclDrafts.get(c.id)===(c.manager_id||''))aclDrafts.delete(c.id)}if(profile.role==='admin')await loadManagerCandidates();if(profile.role==='admin')renderExecutiveCenterOptions();const select=$('centers');select.replaceChildren();for(const c of centers){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.append(o)}$('packageOverview').replaceChildren();for(const c of centers){const p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status);$('packageOverview').append(p)}if(profile.role==='admin'){renderAcl();await loadConsolidated();checkMasterSource(false)}if(!centers.length){$('empty').classList.remove('hidden');$('empty').textContent='Nenhum pacote atribuído a este usuário.';$('revenue').textContent='—';$('expense').textContent='—';$('balance').textContent='—';return}select.value=centers.some(c=>c.id===current?.id)?current.id:centers[0].id;await chooseCenter()}
 $('centers').onchange=async()=>{if(reviewChanges().length&&$('centers').value!==current?.id&&!confirm('Você tem análises de rubricas e cenários ainda não salvas. Trocar de pacote e descartar as alterações?')){$('centers').value=current.id;return}if($('centers').value!==current?.id){reviewDrafts.clear();reviewExpanded.clear();reviewUndo.clear()}if(strategyDirty()&&$('centers').value!==strategyCenterId&&!confirm('Há vínculos estratégicos não salvos. Trocar de pacote e descartar as alterações?')){$('centers').value=strategyCenterId;return}if($('centers').value!==strategyCenterId)strategyReady=false;await chooseCenter()};$('search').oninput=renderLines;$('filter').onchange=renderLines;$('analysisFilter').onchange=renderLines;$('nextPending').onclick=()=>{const x=lines.find(l=>!String(reviewValue(l,'justification')||'').trim());if(!x)return notice('Todas as rubricas deste pacote possuem justificativa técnica.');$('search').value='';$('filter').value='all';$('analysisFilter').value='pending';reviewExpanded.add(x.id);renderLines();const tr=document.querySelector('[data-line-id="'+x.id+'"]');if(tr)tr.scrollIntoView({behavior:'smooth',block:'center'});};
 function statusLabel(s){return({draft:'Rascunho',submitted:'Submetido',in_review:'Em revisão',changes_requested:'Ajustes solicitados',approved:'Aprovado'})[s]||s}
-async function chooseCenter(){current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const centerId=current.id;const [r,scenarioResult]=await Promise.all([db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key,updated_at').eq('center_id',centerId).order('description'),db.from('obz_line_scenarios').select('line_id,intermediate_action,intermediate_annual,intermediate_months,intermediate_consequence,severe_action,severe_annual,severe_months,severe_consequence,updated_at').eq('center_id',centerId)]);if(current?.id!==centerId)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);if(scenarioResult.error)return notice('Erro ao carregar os cenários das rubricas: '+scenarioResult.error.message,true);const savedScenarios=new Map((scenarioResult.data||[]).map(x=>[x.line_id,x]));lines=(r.data||[]).map(x=>{const sc=savedScenarios.get(x.id);return {...x,intermediate_action:sc?.intermediate_action||'',intermediate_annual:sc?.intermediate_annual??null,intermediate_months:sc?.intermediate_months??null,intermediate_consequence:sc?.intermediate_consequence||'',severe_action:sc?.severe_action||'',severe_annual:sc?.severe_annual??null,severe_months:sc?.severe_months??null,severe_consequence:sc?.severe_consequence||'',scenario_updated_at:sc?.updated_at??null}});const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
+async function chooseCenter(){loadedReviewCenter=null;$('exportPackagePdf').disabled=true;current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const centerId=current.id;const [r,scenarioResult]=await Promise.all([db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key,updated_at').eq('center_id',centerId).order('description'),db.from('obz_line_scenarios').select('line_id,intermediate_action,intermediate_annual,intermediate_months,intermediate_consequence,severe_action,severe_annual,severe_months,severe_consequence,updated_at').eq('center_id',centerId)]);if(current?.id!==centerId)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);if(scenarioResult.error)return notice('Erro ao carregar os cenários das rubricas: '+scenarioResult.error.message,true);loadedReviewCenter=centerId;const savedScenarios=new Map((scenarioResult.data||[]).map(x=>[x.line_id,x]));lines=(r.data||[]).map(x=>{const sc=savedScenarios.get(x.id);return {...x,intermediate_action:sc?.intermediate_action||'',intermediate_annual:sc?.intermediate_annual??null,intermediate_months:sc?.intermediate_months??null,intermediate_consequence:sc?.intermediate_consequence||'',severe_action:sc?.severe_action||'',severe_annual:sc?.severe_annual??null,severe_months:sc?.severe_months??null,severe_consequence:sc?.severe_consequence||'',scenario_updated_at:sc?.updated_at??null}});const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
+let loadedReviewCenter=null;
 const REVIEW_FIELDS=['justification','alternative','intermediate_action','intermediate_annual','intermediate_months','intermediate_consequence','severe_action','severe_annual','severe_months','severe_consequence'];
 const REVIEW_ACTIONS=[['','Não definido'],['manter','Manter'],['reduzir','Reduzir'],['ampliar','Ampliar'],['eliminar','Eliminar'],['substituir','Substituir']];
 function reviewCanonical(field,value){
@@ -272,6 +290,7 @@ function reviewRefreshCounts(){
  $('reviewPending').textContent=pending?pending+' rubrica(s) com alterações ainda não salvas.':'Nenhuma alteração pendente.';
  $('reviewSaveAll').disabled=!pending||!reviewEditable();$('reviewSaveBottom').disabled=!pending||!reviewEditable();
  $('reviewDiscard').disabled=!pending||reviewSaving;
+ $('exportPackagePdf').disabled=!canExportPackage();
  const values={base:0,intermediate:0,severe:0},completed={intermediate:0,severe:0};
  for(const x of lines){
   const base=annual(x),sign=x.category==='revenue'?1:-1;values.base+=sign*base;
@@ -496,6 +515,80 @@ async function saveReviews(){
  $('reviewFeedback').textContent=Number(result.data)+' rubrica(s) salvas com sucesso, com auditoria.';
  notice('Análises salvas no Supabase. Esforço máximo 2027 preservado.')
 }
+function canExportPackage(){
+ return !!profile&&!!current&&loadedReviewCenter===current.id&&lines.length>0&&!reviewSaving&&!reviewChanges().length;
+}
+
+function packagePrintMarkup(center,rows,generatedAt,strategy){
+ const html=value=>String(value??'').replace(/[&<>"']/g,char=>({
+  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+ })[char]);
+ const links=strategy?[
+  ['Objetivos estratégicos',strategy.objectives],
+  ['Resultados-chave',strategy.krs],
+  ['Metas do portfólio',strategy.portfolio]
+ ].filter(([,items])=>items.length).map(([label,items])=>
+  '<p><strong>'+label+'</strong> '+items.map(html).join(' · ')+'</p>'
+ ).join(''):'';
+ const totalKeys=['base','intermediate','severe'];
+ const totalLabels=['Esforço máximo','Cenário intermediário','Cenário severo'];
+ const totals=Object.fromEntries(totalKeys.map(key=>[key,{revenue:0,expense:0}]));
+ const hasAmount=value=>value!==null&&value!==undefined&&String(value).trim()!=='';
+ const scenarioCell=(row,key)=>{
+  const action=REVIEW_ACTIONS.find(([value])=>value&&value===row[key+'_action'])?.[1];
+  const amount=row[key+'_annual'];
+  return [action,hasAmount(amount)?br(amount):null].filter(Boolean).map(html).join(' · ')||'A definir';
+ };
+ const detail=rows.map(row=>{
+  const base=annual(row);
+  for(const key of totalKeys){
+   const amount=row[key+'_annual'];
+   totals[key][row.category]+=key==='base'||!hasAmount(amount)?base:Number(amount);
+  }
+  const notes=[['Justificativa',row.justification],['Alternativa',row.alternative]]
+   .filter(([,value])=>String(value??'').trim())
+   .map(([label,value])=>'<p class="print-note"><strong>'+label+'</strong> '+html(value)+'</p>').join('');
+  const monthly=['intermediate','severe'].map((key,index)=>{
+   const values=row[key+'_months'];
+   if(!Array.isArray(values)||values.length!==12)return '';
+   return '<p><strong>'+totalLabels[index+1]+' · meses</strong> '+values.map((value,i)=>months[i]+' '+br(value)).join(' · ')+'</p>';
+  }).join('');
+  return '<tr><td>'+html(row.description)+'<br><small>'+(row.category==='revenue'?'Receita':'Despesa')+'</small></td>'+
+   '<td>'+br(base)+'</td><td>'+scenarioCell(row,'intermediate')+'</td><td class="print-note">'+html(row.intermediate_consequence||'—')+'</td>'+
+   '<td>'+scenarioCell(row,'severe')+'</td><td class="print-note">'+html(row.severe_consequence||'—')+'</td></tr>'+
+   (notes||monthly?'<tr><td colspan="6">'+notes+monthly+'</td></tr>':'');
+ }).join('');
+ const summary=totalKeys.map((key,i)=>{
+  const {revenue,expense}=totals[key];
+  return '<tr><th scope="row">'+totalLabels[i]+'</th><td>'+br(revenue)+'</td><td>'+br(expense)+'</td><td>'+br(revenue-expense)+'</td></tr>';
+ }).join('');
+ return '<p><strong>CDL Novo Hamburgo · Orçamento Base Zero 2027</strong></p><h1>'+html(center.name)+'</h1>'+
+  '<p>Pacote de decisão · '+html(statusLabel(center.status))+' · '+rows.length+' rubrica(s)</p><p>Gerado em '+html(generatedAt)+'</p>'+
+  '<h2>Resumo financeiro anual</h2><table><thead><tr><th>Cenário</th><th>Receitas</th><th>Despesas</th><th>Resultado</th></tr></thead><tbody>'+summary+'</tbody></table>'+
+  '<p>Nos totais dos cenários, rubricas com valor a definir usam o esforço máximo como referência.</p>'+
+  (links?'<h2>Vínculos estratégicos</h2>'+links:'')+
+  '<h2>Revisão das rubricas</h2><table><colgroup><col style="width:22%"><col style="width:12%"><col style="width:13%"><col style="width:20%"><col style="width:13%"><col style="width:20%"></colgroup>'+
+  '<thead><tr><th>Rubrica</th><th>Esforço máximo</th><th>Intermediário</th><th>Consequência do ajuste</th><th>Severo</th><th>Consequência do ajuste</th></tr></thead><tbody>'+detail+'</tbody></table>';
+}
+
+$('exportPackagePdf').onclick=()=>{
+ if(!canExportPackage())return;
+ const generatedAt=new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date());
+ const report=$('packagePrint');
+ const strategy=strategyReady&&strategyCenterId===current.id?{
+  objectives:[...strategySaved.objectives].map(code=>strategyCatalog.objectives.find(item=>item.code===code)?.title||code),
+  krs:[...strategySaved.krs].map(code=>strategyCatalog.krs.find(item=>item.code===code)?.indicator||code),
+  portfolio:[...strategySaved.portfolio].map(key=>strategyCatalog.portfolio.find(item=>item.target_key===key)?.metric||key)
+ }:null;
+ report.innerHTML=packagePrintMarkup(current,lines,generatedAt,strategy);
+ document.body.classList.add('printing-package');
+ report.removeAttribute('aria-hidden');
+ const title=document.title;
+ document.title='OBZ 2027 - '+current.name;
+ try{window.print()}
+ finally{document.body.classList.remove('printing-package');document.title=title;report.replaceChildren();report.setAttribute('aria-hidden','true')}
+};
+
 $('reviewSaveAll').onclick=saveReviews;$('reviewSaveBottom').onclick=saveReviews;
 $('reviewDiscard').onclick=()=>{if(!reviewChanges().length)return;if(!confirm('Descartar todas as alterações ainda não salvas deste pacote?'))return;reviewDrafts.clear();reviewUndo.clear();renderLines();$('reviewFeedback').textContent='Alterações locais descartadas.'};
 async function checkMasterSource(force=false){
