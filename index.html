@@ -53,6 +53,21 @@
 .reviewMini{font-size:11px;color:#526b83;display:block;margin-top:6px}
 .reviewDanger{color:#a23936;font-weight:700}
 @media(max-width:860px){.reviewCards{grid-template-columns:1fr}.reviewDetailGrid{grid-template-columns:1fr}}
+
+.reviewMonthGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.reviewMonthlyPanel{min-width:0;border:1px solid #d6e4ef;border-radius:10px;background:#fff;padding:12px}
+.reviewMonthlyPanel h4{margin:2px 0 9px;color:#183d63;font-size:14px}
+.reviewMonthControls{display:flex;flex-wrap:wrap;align-items:end;gap:8px;margin:12px 0}
+.reviewMonthControls label{min-width:155px;flex:1;font-size:11px}
+.reviewMonthControls label select{margin-top:4px}
+.reviewMonthControls button{font-size:11px;padding:8px 9px}
+.reviewMonthTableWrap{overflow-x:auto;max-width:100%}
+.reviewMonthTable{width:100%;border-collapse:collapse;font-size:11px;min-width:450px}
+.reviewMonthTable th,.reviewMonthTable td{padding:7px;border-bottom:1px solid #e3eaf3;text-align:right}
+.reviewMonthTable th:first-child,.reviewMonthTable td:first-child{text-align:left}
+.reviewMonthInput{width:100px;padding:6px;font-size:11px;text-align:right}
+.reviewMonthTotal{display:block;text-align:right;margin-top:10px;color:#214e77;font-size:13px}
+@media(max-width:1180px){.reviewMonthGrid{grid-template-columns:1fr}}
 </style></head><body><header><div><strong>CDL Novo Hamburgo <span style="opacity:.55">/</span> OBZ 2027</strong><small>Gestão Orçamentária · Orçamento Base Zero</small></div><div class="right"><span class="pill">HOMOLOGAÇÃO</span><span id="who" class="user"></span><button id="logout" class="action secondary hidden">Sair</button></div></header>
 <div id="login" class="auth card"><div class="eyebrow">Acesso restrito</div><h2>Entrar na plataforma</h2><p class="muted">Utilize seu acesso da Plataforma de Demandas CDL.</p><form id="loginForm"><label>E-mail<input type="email" name="email" autocomplete="username" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><button class="action" style="width:100%">Entrar</button></form></div>
 <div id="workspace" class="shell hidden"><aside><div class="asideTitle">PLANEJAMENTO 2027</div><button class="nav active" data-tab="painel">Painel executivo</button><button class="nav" data-tab="pacotes">Pacotes de decisão</button><button class="nav" data-tab="cenarios">Cenários</button><button class="nav" data-tab="governanca">Governança</button><button class="nav hidden" data-tab="alcadas">Alçadas e Cadastros</button><div class="asideTitle">FERRAMENTAS</div><a id="adminLink" class="nav hidden" href="./importacao.html" style="display:block;text-decoration:none">↥ &nbsp; Atualização controlada (CSV)</a></aside><main class="content">
@@ -360,6 +375,57 @@ function reviewScenarioOptions(x,tr,prefix){
 function reviewConsequenceInput(x,tr,prefix){
  const inp=document.createElement('textarea');inp.className='reviewConsequence';inp.rows=2;inp.maxLength=2000;inp.placeholder='Impacto na entrega, equipe, atendimento ou meta...';inp.value=reviewValue(x,prefix+'_consequence')||'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Consequência do cenário '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.oninput=()=>reviewMutate(x,prefix+'_consequence',inp.value,tr);return inp
 }
+
+function reviewMonthsEditor(x,prefix){
+ const wrap=document.createElement('section');wrap.className='reviewMonthlyPanel';
+ const title=document.createElement('h4');title.textContent=(prefix==='intermediate'?'Intermediário':'Severo')+' · distribuição mensal';
+ wrap.append(title);
+ const hint=document.createElement('p');hint.className='reviewMini';
+ hint.textContent='Distribuição inicial sugerida a partir da base. Altere os meses para atualizar o total anual; os dados não são gravados automaticamente.';
+ wrap.append(hint);
+ const controls=document.createElement('div');controls.className='reviewMonthControls';
+ const label=document.createElement('label');label.textContent='Replicar janeiro para fevereiro–dezembro';
+ const mode=document.createElement('select');mode.setAttribute('aria-label','Modo de replicação '+prefix+' '+x.description);
+ for(const spec of [['ratio','Mesma variação percentual'],['value','Mesmo valor de janeiro'],['delta','Mesma diferença em reais']]){
+  const opt=document.createElement('option');opt.value=spec[0];opt.textContent=spec[1];mode.append(opt)
+ }
+ label.append(mode);controls.append(label);
+ const apply=document.createElement('button');apply.className='action secondary';apply.type='button';apply.textContent='Replicar janeiro';
+ apply.disabled=!reviewEditable()||!reviewValue(x,prefix+'_action');apply.onclick=()=>reviewReplicateJanuary(x,prefix,mode.value);controls.append(apply);
+ const undo=document.createElement('button');undo.className='action secondary';undo.type='button';undo.textContent='Desfazer replicação';
+ undo.disabled=!reviewEditable()||!reviewUndo.has(x.id+':'+prefix);undo.onclick=()=>reviewUndoReplicate(x,prefix);controls.append(undo);
+ wrap.append(controls);
+ const scroller=document.createElement('div');scroller.className='reviewMonthTableWrap';
+ const table=document.createElement('table');table.className='reviewMonthTable';
+ const header=document.createElement('thead'),headerRow=document.createElement('tr');
+ for(const t of ['Mês','Orçamento-base','Proposta','Diferença']){
+  const th=document.createElement('th');th.textContent=t;headerRow.append(th)
+ }
+ header.append(headerRow);table.append(header);
+ const tbody=document.createElement('tbody');
+ const base=reviewBaseMonths(x),values=reviewEffectiveMonths(x,prefix);
+ for(let i=0;i<12;i++){
+  const tr=document.createElement('tr');
+  const month=document.createElement('td');month.textContent=months[i]||String(i+1);tr.append(month);
+  const original=document.createElement('td');original.textContent=br(base[i]);tr.append(original);
+  const cell=document.createElement('td'),input=document.createElement('input');
+  input.type='number';input.step='0.01';input.className='reviewMonthInput';input.value=values[i].toFixed(2);
+  input.disabled=!reviewEditable()||!reviewValue(x,prefix+'_action');
+  input.setAttribute('aria-label','Valor proposto '+(months[i]||i+1)+' '+prefix);
+  const diff=document.createElement('td');diff.textContent=br(reviewRound(values[i]-base[i]));
+  input.oninput=()=>{
+   if(input.value.trim()===''||!Number.isFinite(Number(input.value)))return;
+   const main=document.querySelector('[data-line-id="'+x.id+'"]');if(!main)return;
+   reviewSetMonth(x,prefix,i,input.value,main);
+   diff.textContent=br(reviewRound(Number(input.value)-base[i]))
+  };
+  cell.append(input);tr.append(cell,diff);tbody.append(tr)
+ }
+ table.append(tbody);scroller.append(table);wrap.append(scroller);
+ const total=document.createElement('strong');total.className='reviewMonthTotal';total.dataset.monthlyTotal=x.id+':'+prefix;
+ total.textContent='Total anual: '+br(reviewRound(values.reduce((a,b)=>a+b,0)));wrap.append(total);
+ return wrap
+}
 function reviewDetail(x){
  const detail=document.createElement('tr');detail.className='reviewDetails';detail.dataset.lineDetail=x.id;
  const td=document.createElement('td');td.colSpan=8;const grid=document.createElement('div');grid.className='reviewDetailGrid';
@@ -368,6 +434,7 @@ function reviewDetail(x){
   input.oninput=()=>{const main=td.parentNode.previousElementSibling;reviewMutate(x,field,input.value,main)};label.append(input);grid.append(label)
  }
  td.append(grid);
+ const monthGrid=document.createElement('div');monthGrid.className='reviewMonthGrid';monthGrid.append(reviewMonthsEditor(x,'intermediate'),reviewMonthsEditor(x,'severe'));td.append(monthGrid);
  const info=document.createElement('p');info.className='reviewMini';info.textContent='Os valores da base 2027 continuam preservados. Os ajustes intermediário e severo são propostas separadas, não substituições da Planilha Mestra.';td.append(info);
  if(profile?.role==='admin'){
   const btn=document.createElement('button');btn.className='action secondary';btn.style.marginTop='8px';btn.textContent='Edição avançada dos 12 meses (somente admin)';
@@ -383,7 +450,7 @@ function renderLines(){
  for(const x of visible){
   const tr=document.createElement('tr');tr.dataset.lineId=x.id;tr.classList.toggle('reviewChanged',reviewLineDirty(x));
   const tdName=document.createElement('td');tdName.className='reviewName';
-  const toggle=document.createElement('button');toggle.className='action secondary reviewExpand';toggle.textContent=reviewExpanded.has(x.id)?'▾ Fechar justificativa':'▸ Justificativa da rubrica';toggle.setAttribute('aria-expanded',reviewExpanded.has(x.id)?'true':'false');
+  const toggle=document.createElement('button');toggle.className='action secondary reviewExpand';toggle.textContent=reviewExpanded.has(x.id)?'▾ Fechar detalhes':'▸ Justificativa e meses';toggle.setAttribute('aria-expanded',reviewExpanded.has(x.id)?'true':'false');
   toggle.onclick=()=>{if(reviewExpanded.has(x.id))reviewExpanded.delete(x.id);else reviewExpanded.add(x.id);renderLines()};
   const name=document.createElement('div');name.textContent=x.description;
   tdName.append(toggle,name);tr.append(tdName);
