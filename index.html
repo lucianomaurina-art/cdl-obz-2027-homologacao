@@ -19,6 +19,71 @@
 .strategy-picks input[type=checkbox]{width:auto;flex-shrink:0;margin:3px 0 0}
 .strategy-summary{margin:12px 0;padding:10px;background:#f2f6fc;border-radius:8px}
 @media(max-width:850px){.strategy-grid{grid-template-columns:1fr}.strategy-picks{max-height:195px}}
+
+/* Revisão OBZ por rubrica: edição em tabela, base preservada e rascunhos em lote */
+.reviewWrap{overflow:auto;max-width:100%;border:1px solid #dbe5ef;border-radius:12px}
+.reviewTable{border-collapse:separate;border-spacing:0;min-width:1450px;width:100%;font-size:12px}
+.reviewTable th,.reviewTable td{padding:10px;border-bottom:1px solid #e7edf5;vertical-align:top;background:#fff}
+.reviewTable thead th{background:#edf3fa;position:sticky;top:0;z-index:2;color:#34516e}
+.reviewTable thead .reviewGroup{font-weight:800;text-align:center;background:#e8f1f9}
+.reviewTable th:first-child,.reviewTable td:first-child{position:sticky;left:0;z-index:1;background:#fff;box-shadow:2px 0 5px #193f5c14}
+.reviewTable thead th:first-child{z-index:3;background:#edf3fa}
+.reviewTable tr.reviewChanged>td{background:#f9fcff}
+.reviewTable tr.reviewChanged>td:first-child{background:#f9fcff}
+.reviewTable .reviewName{min-width:255px;max-width:325px;font-weight:700;line-height:1.45}
+.reviewTable .reviewValue{white-space:nowrap;font-weight:800;min-width:110px;text-align:right}
+.reviewTable .reviewSelect{min-width:148px;width:100%;font-size:12px;padding:7px 8px}
+.reviewTable .reviewAmount{width:148px;max-width:100%;padding:8px;font-size:12px}
+.reviewTable .reviewConsequence{width:225px;min-width:200px;min-height:75px;max-height:190px;resize:vertical;font-size:12px;line-height:1.4;padding:8px}
+.reviewTable .reviewStatus{min-width:120px;font-size:11px;line-height:1.7}
+.reviewTable .reviewAmountLabel{display:block;color:#64788b;font-weight:650;font-size:11px;margin:6px 0 4px}
+.reviewTable .reviewExpand{font-size:11px;font-weight:750;padding:6px 9px;margin:0 0 7px}
+.reviewDetails td{position:static!important;background:#f5f9fd!important;padding:14px 20px!important;box-shadow:none!important}
+.reviewDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.reviewDetailGrid label{font-size:12px;font-weight:700}
+.reviewDetailGrid textarea{min-height:95px;width:100%;font-size:13px;resize:vertical}
+.reviewControls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0}
+.reviewControls strong{color:#315575}
+.reviewControls .action{white-space:nowrap}
+.reviewCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.reviewCards .reviewCard{border:1px solid #dce5ef;background:#f9fbfe;border-radius:10px;padding:12px}
+.reviewCards .reviewCard strong{font-size:17px;display:block;margin-top:5px}
+.reviewCards .reviewCard small{color:#64748b}
+.reviewDisclaimer{font-size:12px;color:#61758b;margin:8px 0 12px;line-height:1.5}
+.reviewMini{font-size:11px;color:#526b83;display:block;margin-top:6px}
+.reviewDanger{color:#a23936;font-weight:700}
+@media(max-width:860px){.reviewCards{grid-template-columns:1fr}.reviewDetailGrid{grid-template-columns:1fr}}
+
+.reviewMonthGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.reviewMonthlyPanel{min-width:0;border:1px solid #d6e4ef;border-radius:10px;background:#fff;padding:12px}
+.reviewMonthlyPanel h4{margin:2px 0 9px;color:#183d63;font-size:14px}
+.reviewMonthControls{display:flex;flex-wrap:wrap;align-items:end;gap:8px;margin:12px 0}
+.reviewMonthControls label{min-width:155px;flex:1;font-size:11px}
+.reviewMonthControls label select{margin-top:4px}
+.reviewMonthControls button{font-size:11px;padding:8px 9px}
+.reviewMonthTableWrap{overflow-x:auto;max-width:100%}
+.reviewMonthTable{width:100%;border-collapse:collapse;font-size:11px;min-width:450px}
+.reviewMonthTable th,.reviewMonthTable td{padding:7px;border-bottom:1px solid #e3eaf3;text-align:right}
+.reviewMonthTable th:first-child,.reviewMonthTable td:first-child{text-align:left}
+.reviewMonthInput{width:100px;padding:6px;font-size:11px;text-align:right}
+.reviewMonthTotal{display:block;text-align:right;margin-top:10px;color:#214e77;font-size:13px}
+@media(max-width:1180px){.reviewMonthGrid{grid-template-columns:1fr}}
+#packagePrint {display:none}
+@media print {
+  @page {size:A4 landscape; margin:14mm}
+  body.printing-package {display:block; margin:0; background:white; color:#182e42}
+  body.printing-package > :not(#packagePrint) {display:none !important}
+  body.printing-package #packagePrint {display:block; font:10pt/1.35 system-ui,sans-serif}
+  #packagePrint h1 {font-size:24pt; margin:4mm 0 1mm}
+  #packagePrint h2 {font-size:14pt; margin:6mm 0 2mm; break-after:avoid}
+  #packagePrint p {margin:1mm 0}
+  #packagePrint table {width:100%; border-collapse:collapse; table-layout:fixed}
+  #packagePrint thead {display:table-header-group}
+  #packagePrint th, #packagePrint td {padding:2mm; border:1px solid #becbd6; text-align:left; vertical-align:top; overflow-wrap:anywhere}
+  #packagePrint th {font-weight:750; background:#e8eff5; print-color-adjust:exact}
+  #packagePrint tr {break-inside:avoid}
+  #packagePrint .print-note {white-space:pre-wrap}
+}
 </style></head><body><header><div><strong>CDL Novo Hamburgo <span style="opacity:.55">/</span> OBZ 2027</strong><small>Gestão Orçamentária · Orçamento Base Zero</small></div><div class="right"><span class="pill">HOMOLOGAÇÃO</span><span id="who" class="user"></span><button id="logout" class="action secondary hidden">Sair</button></div></header>
 <div id="login" class="auth card"><div class="eyebrow">Acesso restrito</div><h2>Entrar na plataforma</h2><p class="muted">Utilize seu acesso da Plataforma de Demandas CDL.</p><form id="loginForm"><label>E-mail<input type="email" name="email" autocomplete="username" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><button class="action" style="width:100%">Entrar</button></form></div>
 <div id="workspace" class="shell hidden"><aside><div class="asideTitle">PLANEJAMENTO 2027</div><button class="nav active" data-tab="painel">Painel executivo</button><button class="nav" data-tab="pacotes">Pacotes de decisão</button><button class="nav" data-tab="cenarios">Cenários</button><button class="nav" data-tab="governanca">Governança</button><button class="nav hidden" data-tab="alcadas">Alçadas e Cadastros</button><div class="asideTitle">FERRAMENTAS</div><a id="adminLink" class="nav hidden" href="./importacao.html" style="display:block;text-decoration:none">↥ &nbsp; Atualização controlada (CSV)</a></aside><main class="content">
@@ -50,7 +115,19 @@
 <p class="muted">Ao selecionar um RK, o objetivo estratégico correspondente é incluído automaticamente. Catálogos provenientes das planilhas de estratégia e portfólio de 2027; metas e indicadores devem ser validados contra as versões vigentes.</p>
 <div class="toolbar" style="align-items:center"><button id="strategySave" class="action" disabled>Salvar todos os vínculos do pacote</button><button id="strategyDiscard" class="action secondary" disabled>Descartar edições</button><span id="strategyFeedback" class="muted" role="status">Nenhuma alteração pendente.</span></div>
 </div>
-<div class="card"><div class="sectionHead"><h2>Preparação do pacote para análise</h2><span class="pill" id="analysisProgress">0 de 0</span></div><p class="muted">Acompanhe o preenchimento das justificativas técnicas antes da submissão à revisão. Esta etapa não altera os valores importados.</p><div class="meter"><span id="analysisMeter" style="background:#158061"></span></div><p id="analysisSummary" class="muted" role="status">Aguardando seleção do pacote.</p><button id="nextPending" class="action secondary">Analisar próxima rubrica pendente</button></div><div class="card"><div class="sectionHead"><h2>Rubricas e justificativas</h2><span class="pill" id="lineCount">0 rubricas</span></div><div class="tablewrap"><table><thead><tr><th>Rubrica</th><th>Tipo</th><th class="num">Valor anual</th><th>Situação da análise</th><th>Ação</th></tr></thead><tbody id="lines"></tbody></table></div></div><div id="editor" class="card hidden"><h2>Justificativa e alternativas da rubrica</h2><p id="lineTitle" class="muted"></p><form id="editForm"><h3>Distribuição mensal</h3><div id="months" class="monthly"></div><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div></section>
+<div class="card"><div class="sectionHead"><h2>Preparação do pacote para análise</h2><span class="pill" id="analysisProgress">0 de 0</span></div><p class="muted">Acompanhe o preenchimento das justificativas técnicas antes da submissão à revisão. Esta etapa não altera os valores importados.</p><div class="meter"><span id="analysisMeter" style="background:#158061"></span></div><p id="analysisSummary" class="muted" role="status">Aguardando seleção do pacote.</p><button id="nextPending" class="action secondary">Analisar próxima rubrica pendente</button></div><div class="card" id="rubricReviewCard"><div class="sectionHead"><h2>Análise das rubricas e cenários de decisão</h2><span class="pill" id="lineCount">0 rubricas</span></div>
+<p class="muted">Trabalhe diretamente nesta tabela: o <strong>esforço máximo</strong> corresponde ao orçamento 2027 importado; nos cenários <strong>intermediário</strong> e <strong>severo</strong>, defina a ação, o valor anual possível e a consequência. Clique em <strong>Justificativa da rubrica</strong> para registrar os fundamentos logo abaixo dela.</p>
+<div class="reviewCards" id="reviewScenarioTotals"><div class="reviewCard"><small>Esforço máximo · base 2027</small><strong id="reviewBaseResult">—</strong></div><div class="reviewCard"><small>Cenário intermediário · resultado parcial</small><strong id="reviewIntermediateResult">—</strong><small id="reviewIntermediateProgress"></small></div><div class="reviewCard"><small>Cenário severo · resultado parcial</small><strong id="reviewSevereResult">—</strong><small id="reviewSevereProgress"></small></div></div>
+<p class="reviewDisclaimer">As premissas gerais de queda de receita de 5% e 25% estão no simulador de Cenários. Aqui, cada gestor informa as <strong>medidas específicas por rubrica</strong>. Rubricas ainda não preenchidas entram provisoriamente no somatório pelo valor-base; isso não representa decisão validada.</p>
+<div class="reviewControls"><strong id="reviewPending" role="status">Nenhuma alteração pendente.</strong><div class="toolbar" style="margin:0"><button id="reviewSaveAll" class="action" disabled>Salvar todas as alterações</button><button id="reviewDiscard" class="action secondary" disabled>Descartar alterações</button></div></div>
+<div class="reviewWrap" tabindex="0" aria-label="Tabela de revisão das rubricas com rolagem horizontal"><table class="reviewTable"><thead><tr>
+<th rowspan="2">Rubrica / justificativa</th><th rowspan="2">Tipo</th><th rowspan="2" class="num">Esforço máximo<br><small>Base anual 2027</small></th><th rowspan="2">Situação da análise</th>
+<th colspan="2" class="reviewGroup">Cenário intermediário</th><th colspan="2" class="reviewGroup">Cenário severo</th></tr>
+<tr><th>Ação e valor anual</th><th>Consequência do ajuste</th><th>Ação e valor anual</th><th>Consequência do ajuste</th></tr></thead><tbody id="lines"></tbody></table></div>
+<div class="reviewControls"><span id="reviewFeedback" class="muted" role="status">Revise as rubricas e salve as alterações do pacote em um único lote.</span><button id="reviewSaveBottom" class="action" disabled>Salvar alterações do pacote</button><button id="exportPackagePdf" class="action secondary" disabled>Exportar pacote em PDF</button></div>
+</div><div id="editor" class="card hidden"><h2>Edição excepcional dos valores mensais (administração)</h2><p class="muted">Ajuste a base mensal somente quando autorizado. A análise rotineira de justificativas e cenários fica diretamente na tabela acima.</p><p id="lineTitle" class="muted"></p><form id="editForm"><h3>Distribuição mensal — base oficial</h3><p class="muted">Somente a administração pode alterar a base. Alterações neste formulário gerarão diferenças em relação à Planilha Mestra e devem ter autorização. A revisão normal é feita na tabela acima.</p>
+<div class="reviewControls"><label>Replicar janeiro como<select id="baseJanuaryMode"><option value="ratio">Mesma variação percentual</option><option value="value">Mesmo valor mensal</option><option value="delta">Mesma diferença em reais</option></select></label><button type="button" id="baseRepeatJanuary" class="action secondary">Replicar janeiro na base</button><button type="button" id="baseUndoJanuary" class="action secondary" disabled>Desfazer replicação</button></div><div id="baseReplicateNotice" class="reviewMini" role="status"></div>
+<div id="months" class="monthly"></div><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div></section>
 <section id="cenarios" class="tab hidden"><div class="eyebrow">Planejamento e decisão</div><h1>Simulador de cenários</h1><p class="subtitle">Avalie impactos no resultado e o esforço para a meta estratégica.</p><div class="note">Simulações não alteram os dados orçamentários e utilizam a fotografia consolidada de referência.</div><div class="card"><h2>Premissas do cenário</h2><div class="simgrid"><label>Comportamento da receita<select id="scenario"><option value="0">Receita-base</option><option value="-0.05">Queda moderada (–5%)</option><option value="-0.25">Estresse severo (–25%)</option></select></label><label>Redução de despesas (R$)<input id="cut" type="number" min="0" step="1000" value="0"></label><label>Receita adicional (R$)<input id="extra" type="number" min="0" step="1000" value="0"></label></div></div><div class="simgrid"><div class="simresult"><small class="muted">Receita simulada</small><strong id="simRevenue">—</strong></div><div class="simresult"><small class="muted">Resultado simulado</small><strong id="simBalance">—</strong></div><div class="simresult"><small class="muted">Lacuna para a meta</small><strong id="simGap">—</strong></div></div></section>
 <section id="governanca" class="tab hidden"><div class="eyebrow">Controle e responsabilidade</div><h1>Governança do orçamento</h1><p class="subtitle">Fluxo de revisão, aprovação e trilha de auditoria.</p><div class="card"><h2>Prontidão para submissão</h2><p class="muted">O pacote somente pode ser submetido quando o responsável tiver conferido os vínculos estratégicos e registrado as justificativas das rubricas.</p><div id="readinessSummary" role="status" class="muted">Aguardando dados...</div></div><div class="card"><h2>Etapas do processo</h2><div class="workflow" id="workflow"></div></div><div class="grid2"><div class="card"><h2>Tramitação do pacote</h2><p>Situação atual: <strong id="status">—</strong></p><div id="actions" class="toolbar"></div></div><div class="card"><h2>Histórico de alterações</h2><div id="audit" class="muted">Sem registros.</div></div></div></section><section id="alcadas" class="tab hidden">
 <div class="eyebrow">Administração do OBZ 2027</div><h1>Alçadas e Cadastros</h1>
@@ -73,11 +150,12 @@
 <tr><td>Colaborador</td><td>Somente se for designado responsável</td><td>Mesma regra operacional do responsável designado</td><td>Submeter, se designado</td></tr>
 </tbody></table></div><p class="muted">Esta matriz apresenta as permissões atualmente implementadas. A parametrização da alçada de aprovação por valor ou por cargo ainda não faz parte do modelo de dados.</p></div>
 </section><p class="foot">CDL Novo Hamburgo · OBZ 2027 · Homologação. Premissas fiscais e créditos são projeções sujeitas à validação contábil.</p><p id="message" role="status"></p></main></div>
+<article id="packagePrint" aria-hidden="true"></article>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script>
 'use strict';
-const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,dashboardRows=[],masterChecking=false,masterLastAttempt=0,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false,strategySuggestion=null;
+const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,dashboardRows=[],masterChecking=false,masterLastAttempt=0,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false,strategySuggestion=null,reviewDrafts=new Map(),reviewExpanded=new Set(),reviewUndo=new Map(),reviewSaving=false,baseJanuaryUndo=null;
 function notice(s,error=false){$('message').textContent=s;$('message').className=error?'error':''}
-function tab(id){if(strategyDirty()&&id!=='pacotes'&&!confirm('Há vínculos estratégicos não salvos neste pacote. Sair da aba sem salvar?'))return false;if(document.querySelector('#alcadas.tab:not(.hidden)')&&id!=='alcadas'&&aclChanges().length&&!confirm('Você tem alterações de responsáveis não salvas. Deseja sair desta aba sem salvar?'))return false;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==id));return true}
+function tab(id){if(reviewChanges().length&&id!=='pacotes'&&!confirm('Há análises de rubricas e cenários ainda não salvas. Sair desta aba sem salvar?'))return false;if(strategyDirty()&&id!=='pacotes'&&!confirm('Há vínculos estratégicos não salvos neste pacote. Sair da aba sem salvar?'))return false;if(document.querySelector('#alcadas.tab:not(.hidden)')&&id!=='alcadas'&&aclChanges().length&&!confirm('Você tem alterações de responsáveis não salvas. Deseja sair desta aba sem salvar?'))return false;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==id));return true}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(!tab(b.dataset.tab))return;if(b.dataset.tab==='alcadas')history.replaceState(null,'','#alcadas');else if(window.location.hash==='#alcadas')history.replaceState(null,'',window.location.pathname+window.location.search)});
 function showReference(){const r=reference,vals={refRevenue:r.revenue,refExpense:r.expense,refBalance:r.revenue-r.expense,refGoal:r.goal,refGap:r.goal-r.revenue+r.expense,refSpcRevenue:r.spcRevenue,refSpcBalance:r.spcBalance};for(const [k,v] of Object.entries(vals))$(k).textContent=br(v);$('gapMeter').style.width=Math.min(100,Math.max(0,100*(r.goal-r.revenue+r.expense)/r.revenue))+'%';sim()}
 function sim(){const r=reference,revenue=r.revenue*(1+Number($('scenario').value))+Math.max(0,Number($('extra').value)||0),balance=revenue-r.expense+Math.max(0,Number($('cut').value)||0);for(const [k,v] of Object.entries({simRevenue:revenue,simBalance:balance,simGap:Math.max(0,r.goal-balance)}))$(k).textContent=br(v)}
@@ -86,8 +164,8 @@ function annual(x){return (Array.isArray(x.months)?x.months:[]).reduce((a,b)=>a+
 async function boot(){if(!db)return notice('Configuração de conexão Supabase indisponível.',true);const {data}=await db.auth.getSession();if(data.session)await openWorkspace()}
 async function openWorkspace(){const {data:{user}}=await db.auth.getUser();if(!user){$('login').classList.remove('hidden');$('workspace').classList.add('hidden');$('logout').classList.add('hidden');return}const p=await db.from('profiles').select('name,role,active').eq('id',user.id).maybeSingle();if(p.error||!p.data?.active){notice('Perfil interno ativo não encontrado.',true);await db.auth.signOut();return}profile={...p.data,id:user.id};const admin=profile.role==='admin';$('who').textContent=profile.name||user.email;$('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('logout').classList.remove('hidden');$('adminLink').classList.toggle('hidden',!admin);$('masterImport').classList.toggle('hidden',!admin);$('emptyAdmin').classList.toggle('hidden',!admin);document.querySelector('[data-tab="alcadas"]').classList.toggle('hidden',!admin);document.querySelector('[data-tab="painel"]').classList.toggle('hidden',!admin);document.querySelector('[data-tab="cenarios"]').classList.toggle('hidden',!admin);if(admin){showReference();tab(window.location.hash==='#alcadas'?'alcadas':window.location.hash==='#pacotes'?'pacotes':'painel')}else tab('pacotes');await loadStrategyCatalog();await loadCenters()}
 $('loginForm').onsubmit=async e=>{e.preventDefault();if(!db)return notice('Supabase indisponível.',true);const f=new FormData(e.target),r=await db.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});if(r.error)return notice('Não foi possível autenticar.',true);await openWorkspace()};
-$('logout').onclick=async()=>{if(aclChanges().length&&!confirm('Existem alterações de responsáveis não salvas. Sair sem salvar?'))return;aclDrafts.clear();await db.auth.signOut();profile=null;current=null;lines=[];strategyCenterId=null;strategyReady=false;await openWorkspace();notice('Sessão encerrada.')};
-$('refresh').onclick=loadCenters;
+$('logout').onclick=async()=>{if(reviewChanges().length&&!confirm('Há revisões de rubricas não salvas. Sair sem salvar?'))return;if(strategyDirty()&&!confirm('Há vínculos estratégicos não salvos. Sair sem salvar?'))return;if(aclChanges().length&&!confirm('Existem alterações de responsáveis não salvas. Sair sem salvar?'))return;aclDrafts.clear();reviewDrafts.clear();reviewExpanded.clear();reviewUndo.clear();baseJanuaryUndo=null;await db.auth.signOut();profile=null;current=null;lines=[];strategyCenterId=null;strategyReady=false;await openWorkspace();notice('Sessão encerrada.')};
+$('refresh').onclick=async()=>{if(reviewChanges().length&&!confirm('Há revisões de rubricas não salvas. Descartar e atualizar os dados?'))return;reviewDrafts.clear();reviewExpanded.clear();reviewUndo.clear();await loadCenters()};
 async function loadManagerCandidates(){if(profile?.role!=='admin')return;const r=await db.from('profiles').select('id,name,sector,role,active').eq('active',true).order('name');if(r.error){notice('Não foi possível listar usuários: '+r.error.message,true);return}managerCandidates=r.data||[]}
 function renderAclUsers(){const tbody=$('aclUsers');tbody.replaceChildren();for(const p of managerCandidates){const tr=document.createElement('tr');for(const t of [p.name||'Sem nome',p.sector||'Não informado',({admin:'Administrador',manager:'Gestor',collaborator:'Colaborador'}[p.role]||p.role)]){let td=document.createElement('td');td.textContent=t;tr.append(td)}tbody.append(tr)}}
 function aclChanges(){return centers.filter(c=>aclDrafts.has(c.id)&&aclDrafts.get(c.id)!==(c.manager_id||''))}
@@ -186,14 +264,333 @@ $('strategySave').onclick=async()=>{
  notice('Vínculos estratégicos do pacote atualizados.')
 };
 $('strategyDiscard').onclick=()=>{if(!strategyDirty()||!confirm('Descartar os vínculos ainda não salvos neste pacote?'))return;strategyDraft=strategyClone(strategySaved);strategyRender()};
-window.addEventListener('beforeunload',e=>{if(strategyDirty()&&!strategySaving){e.preventDefault();e.returnValue=''}});
+window.addEventListener('beforeunload',e=>{if((reviewChanges().length&&!reviewSaving)||strategyDirty()&&!strategySaving){e.preventDefault();e.returnValue=''}});
 
 async function loadCenters(){const r=await db.from('obz_centers').select('id,name,status,manager_id').eq('fiscal_year',2027).order('name');if(r.error)return notice('Erro ao carregar pacotes: '+r.error.message,true);centers=r.data||[];for(const c of centers){if(aclDrafts.has(c.id)&&aclDrafts.get(c.id)===(c.manager_id||''))aclDrafts.delete(c.id)}if(profile.role==='admin')await loadManagerCandidates();if(profile.role==='admin')renderExecutiveCenterOptions();const select=$('centers');select.replaceChildren();for(const c of centers){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.append(o)}$('packageOverview').replaceChildren();for(const c of centers){const p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status);$('packageOverview').append(p)}if(profile.role==='admin'){renderAcl();await loadConsolidated();checkMasterSource(false)}if(!centers.length){$('empty').classList.remove('hidden');$('empty').textContent='Nenhum pacote atribuído a este usuário.';$('revenue').textContent='—';$('expense').textContent='—';$('balance').textContent='—';return}select.value=centers.some(c=>c.id===current?.id)?current.id:centers[0].id;await chooseCenter()}
-$('centers').onchange=async()=>{if(strategyDirty()&&$('centers').value!==strategyCenterId&&!confirm('Há vínculos estratégicos não salvos. Trocar de pacote e descartar as alterações?')){$('centers').value=strategyCenterId;return}if($('centers').value!==strategyCenterId)strategyReady=false;await chooseCenter()};$('search').oninput=renderLines;$('filter').onchange=renderLines;$('analysisFilter').onchange=renderLines;$('nextPending').onclick=()=>{const x=lines.find(l=>!String(l.justification||'').trim());if(x)editLine(x);else notice('Todas as rubricas deste pacote possuem justificativa técnica.');};
+$('centers').onchange=async()=>{if(reviewChanges().length&&$('centers').value!==current?.id&&!confirm('Você tem análises de rubricas e cenários ainda não salvas. Trocar de pacote e descartar as alterações?')){$('centers').value=current.id;return}if($('centers').value!==current?.id){reviewDrafts.clear();reviewExpanded.clear();reviewUndo.clear()}if(strategyDirty()&&$('centers').value!==strategyCenterId&&!confirm('Há vínculos estratégicos não salvos. Trocar de pacote e descartar as alterações?')){$('centers').value=strategyCenterId;return}if($('centers').value!==strategyCenterId)strategyReady=false;await chooseCenter()};$('search').oninput=renderLines;$('filter').onchange=renderLines;$('analysisFilter').onchange=renderLines;$('nextPending').onclick=()=>{const x=lines.find(l=>!String(reviewValue(l,'justification')||'').trim());if(!x)return notice('Todas as rubricas deste pacote possuem justificativa técnica.');$('search').value='';$('filter').value='all';$('analysisFilter').value='pending';reviewExpanded.add(x.id);renderLines();const tr=document.querySelector('[data-line-id="'+x.id+'"]');if(tr)tr.scrollIntoView({behavior:'smooth',block:'center'});};
 function statusLabel(s){return({draft:'Rascunho',submitted:'Submetido',in_review:'Em revisão',changes_requested:'Ajustes solicitados',approved:'Aprovado'})[s]||s}
-async function chooseCenter(){current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key').eq('center_id',current.id).order('description');if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
+async function chooseCenter(){loadedReviewCenter=null;$('exportPackagePdf').disabled=true;current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const centerId=current.id;const [r,scenarioResult]=await Promise.all([db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key,updated_at').eq('center_id',centerId).order('description'),db.from('obz_line_scenarios').select('line_id,intermediate_action,intermediate_annual,intermediate_months,intermediate_consequence,severe_action,severe_annual,severe_months,severe_consequence,updated_at').eq('center_id',centerId)]);if(current?.id!==centerId)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);if(scenarioResult.error)return notice('Erro ao carregar os cenários das rubricas: '+scenarioResult.error.message,true);loadedReviewCenter=centerId;const savedScenarios=new Map((scenarioResult.data||[]).map(x=>[x.line_id,x]));lines=(r.data||[]).map(x=>{const sc=savedScenarios.get(x.id);return {...x,intermediate_action:sc?.intermediate_action||'',intermediate_annual:sc?.intermediate_annual??null,intermediate_months:sc?.intermediate_months??null,intermediate_consequence:sc?.intermediate_consequence||'',severe_action:sc?.severe_action||'',severe_annual:sc?.severe_annual??null,severe_months:sc?.severe_months??null,severe_consequence:sc?.severe_consequence||'',scenario_updated_at:sc?.updated_at??null}});const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
-function renderLines(){const tbody=$('lines');tbody.replaceChildren();const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;for(const x of lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(x.justification||'').trim())))){const tr=document.createElement('tr');for(const [value,isNumber] of [[x.description,false],[x.category==='revenue'?'Receita':'Despesa',false],[br(annual(x)),true],[String(x.justification||'').trim()?'Justificada':'Pendente',false]]){const td=document.createElement('td');td.textContent=value;if(isNumber)td.className='num';tr.append(td)}const td=document.createElement('td'),b=document.createElement('button');b.className='action secondary';b.textContent='Analisar';b.onclick=()=>editLine(x);td.append(b);tr.append(td);tbody.append(tr)}if(!tbody.children.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Nenhuma rubrica encontrada.';tr.append(td);tbody.append(tr)}}
+let loadedReviewCenter=null;
+const REVIEW_FIELDS=['justification','alternative','intermediate_action','intermediate_annual','intermediate_months','intermediate_consequence','severe_action','severe_annual','severe_months','severe_consequence'];
+const REVIEW_ACTIONS=[['','Não definido'],['manter','Manter'],['reduzir','Reduzir'],['ampliar','Ampliar'],['eliminar','Eliminar'],['substituir','Substituir']];
+function reviewCanonical(field,value){
+ if(field.endsWith('_months'))return Array.isArray(value)?JSON.stringify(value.map(n=>Number(n).toFixed(2))):'';
+ if(field.endsWith('_annual')){if(value===null||value===undefined||String(value).trim()==='')return '';const n=Number(value);return Number.isFinite(n)?n.toFixed(2):'inválido:'+value}
+ return String(value??'')
+}
+function reviewValue(x,field){const draft=reviewDrafts.get(x.id);return draft&&Object.prototype.hasOwnProperty.call(draft,field)?draft[field]:x[field]}
+function reviewLineDirty(x){return REVIEW_FIELDS.some(field=>reviewCanonical(field,reviewValue(x,field))!==reviewCanonical(field,x[field]))}
+function reviewChanges(){return lines.filter(reviewLineDirty)}
+function reviewEditable(){return !!current&&['draft','changes_requested'].includes(current.status)&&!reviewSaving}
+function reviewScenarioComplete(x,prefix){const d=reviewValue(x,prefix+'_action'),annualValue=reviewValue(x,prefix+'_annual'),consequence=reviewValue(x,prefix+'_consequence');return !!d&&reviewCanonical(prefix+'_annual',annualValue)!==''&&!!String(consequence||'').trim()}
+function reviewStatusText(x){return (String(reviewValue(x,'justification')||'').trim()?'✓ Justificada':'○ Sem justificativa')+' · '+(reviewScenarioComplete(x,'intermediate')?'✓ Inter.':'○ Inter.')+' · '+(reviewScenarioComplete(x,'severe')?'✓ Severo':'○ Severo')}
+function reviewRefreshCounts(){
+ const pending=reviewChanges().length;
+ $('reviewPending').textContent=pending?pending+' rubrica(s) com alterações ainda não salvas.':'Nenhuma alteração pendente.';
+ $('reviewSaveAll').disabled=!pending||!reviewEditable();$('reviewSaveBottom').disabled=!pending||!reviewEditable();
+ $('reviewDiscard').disabled=!pending||reviewSaving;
+ $('exportPackagePdf').disabled=!canExportPackage();
+ const values={base:0,intermediate:0,severe:0},completed={intermediate:0,severe:0};
+ for(const x of lines){
+  const base=annual(x),sign=x.category==='revenue'?1:-1;values.base+=sign*base;
+  for(const prefix of ['intermediate','severe']){
+   const annualValue=reviewValue(x,prefix+'_annual'),chosen=annualValue===null||annualValue===undefined||String(annualValue).trim()===''?base:Number(annualValue);
+   values[prefix]+=sign*(Number.isFinite(chosen)?chosen:base);
+   if(reviewScenarioComplete(x,prefix))completed[prefix]++;
+  }
+ }
+ $('reviewBaseResult').textContent=br(values.base);$('reviewIntermediateResult').textContent=br(values.intermediate);$('reviewSevereResult').textContent=br(values.severe);
+ $('reviewIntermediateProgress').textContent=completed.intermediate+' de '+lines.length+' rubricas com ação, valor e consequência';
+ $('reviewSevereProgress').textContent=completed.severe+' de '+lines.length+' rubricas com ação, valor e consequência';
+}
+function reviewRound(value){return Math.round(Number(value)*100)/100}
+function reviewBaseMonths(x){return Array.isArray(x.months)?x.months.map(v=>Number(v||0)):Array(12).fill(0)}
+function reviewDistribute(x,target){
+ const base=reviewBaseMonths(x),cents=base.map(v=>Math.round(v*100)),year=Math.round(Number(target)*100),total=cents.reduce((a,b)=>a+b,0);
+ let split=Array(12).fill(0),sum=0;
+ for(let i=0;i<11;i++){split[i]=total?Math.round(year*cents[i]/total):Math.trunc(year/12);sum+=split[i]}
+ split[11]=year-sum;return split.map(v=>v/100)
+}
+function reviewEffectiveMonths(x,prefix){
+ const saved=reviewValue(x,prefix+'_months');
+ if(Array.isArray(saved)&&saved.length===12)return saved.map(Number);
+ const annualValue=reviewValue(x,prefix+'_annual');
+ return annualValue===null||annualValue===undefined||String(annualValue).trim()===''?reviewBaseMonths(x):reviewDistribute(x,annualValue)
+}
+function reviewMutate(x,field,value,tr){
+ const update={};for(const k of REVIEW_FIELDS)update[k]=reviewValue(x,k);
+ update[field]=value;
+ if(field.endsWith('_action')){
+  const prefix=field.replace('_action','');
+  if(value==='manter'){update[prefix+'_annual']=annual(x).toFixed(2);update[prefix+'_months']=null}
+  if(value==='eliminar'){update[prefix+'_annual']='0.00';update[prefix+'_months']=Array(12).fill(0)}
+  if(value===''){update[prefix+'_annual']='';update[prefix+'_months']=null}
+  const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');
+  if(amount)amount.value=update[prefix+'_annual']===null?'':update[prefix+'_annual'];
+ }
+ if(field.endsWith('_annual'))update[field.replace('_annual','')+'_months']=null;
+ if(field.endsWith('_months')){
+  const prefix=field.replace('_months','');
+  update[field]=value===null?null:value.map(v=>reviewRound(v));
+  if(Array.isArray(value)){
+   update[prefix+'_annual']=reviewRound(value.reduce((a,b)=>a+Number(b),0)).toFixed(2);
+   const amount=tr.querySelector('[data-field="'+prefix+'_annual"]');if(amount)amount.value=update[prefix+'_annual'];
+  }
+ }
+ reviewDrafts.set(x.id,update);
+ if(!reviewLineDirty(x))reviewDrafts.delete(x.id);
+ tr.classList.toggle('reviewChanged',reviewLineDirty(x));
+ const status=tr.querySelector('[data-review-status]');if(status)status.textContent=reviewStatusText(x);
+ $('reviewFeedback').textContent='O pacote possui alterações em edição. Use Salvar todas as alterações.';
+ reviewRefreshCounts()
+}
+function reviewSetMonth(x,prefix,index,value,tr){
+ if(!Number.isFinite(Number(value)))return notice('Valor mensal inválido.',true);
+ const amounts=reviewEffectiveMonths(x,prefix);amounts[index]=reviewRound(value);
+ reviewUndo.delete(x.id+':'+prefix);reviewMutate(x,prefix+'_months',amounts,tr);
+ const undoControl=document.querySelector('[data-review-undo="'+x.id+':'+prefix+'"]');if(undoControl)undoControl.disabled=true;
+ const label=document.querySelector('[data-monthly-total="'+x.id+':'+prefix+'"]');
+ if(label)label.textContent='Total anual deste cenário: '+br(reviewRound(amounts.reduce((a,b)=>a+b,0)))
+}
+function reviewReplicateJanuary(x,prefix,mode){
+ if(!reviewEditable())return;
+ if(!reviewValue(x,prefix+'_action'))return notice('Selecione uma ação antes de replicar os meses.',true);
+ const before=reviewValue(x,prefix+'_months'),beforeAnnual=reviewValue(x,prefix+'_annual');
+ const amounts=reviewEffectiveMonths(x,prefix),base=reviewBaseMonths(x),jan=Number(amounts[0]);
+ let proposed=Array(12).fill(0);
+ if(mode==='value')proposed.fill(reviewRound(jan));
+ if(mode==='ratio'){
+  if(Math.abs(base[0])<0.0000001)return notice('A base de janeiro é zero. Utilize mesmo valor ou diferença em R$.',true);
+  const ratio=jan/base[0];proposed=base.map(v=>reviewRound(v*ratio))
+ }
+ if(mode==='delta'){
+  const delta=jan-base[0];proposed=base.map(v=>reviewRound(v+delta))
+ }
+ proposed[0]=reviewRound(jan);
+ const yearly=reviewRound(proposed.reduce((a,b)=>a+b,0));
+ const modeLabel={value:'o mesmo valor de janeiro',ratio:'a mesma variação percentual sobre cada mês da base',delta:'a mesma diferença em reais aplicada a janeiro'}[mode];
+ const prompt='Aplicar '+modeLabel+' de fevereiro a dezembro?\n\nJaneiro proposto: '+br(jan)+'\nTotal anual proposto: '+br(yearly)+'\nDiferença sobre a base anual: '+br(yearly-annual(x))+'\n\nOs dados só serão gravados ao clicar em Salvar todas as alterações.';
+ if(!confirm(prompt))return;
+ reviewUndo.set(x.id+':'+prefix,{months:Array.isArray(before)?[...before]:null,annual:beforeAnnual});
+ const tr=document.querySelector('[data-line-id="'+x.id+'"]');if(!tr)return;
+ reviewMutate(x,prefix+'_months',proposed,tr);renderLines();
+ $('reviewFeedback').textContent='Janeiro replicado. Confira os 12 meses antes de salvar.'
+}
+function reviewUndoReplicate(x,prefix){
+ const key=x.id+':'+prefix,before=reviewUndo.get(key);if(!before)return;
+ const update={};for(const k of REVIEW_FIELDS)update[k]=reviewValue(x,k);
+ update[prefix+'_months']=before.months;update[prefix+'_annual']=before.annual;
+ reviewDrafts.set(x.id,update);if(!reviewLineDirty(x))reviewDrafts.delete(x.id);
+ reviewUndo.delete(key);renderLines();$('reviewFeedback').textContent='Replicação desfeita antes de salvar.'
+}
+function reviewScenarioOptions(x,tr,prefix){
+ const container=document.createElement('div');
+ const sel=document.createElement('select');sel.className='reviewSelect';sel.dataset.field=prefix+'_action';sel.setAttribute('aria-label',(prefix==='intermediate'?'Ação intermediária':'Ação severa')+' — '+x.description);
+ for(const [v,label] of REVIEW_ACTIONS){const o=document.createElement('option');o.value=v;o.textContent=label;sel.append(o)}
+ sel.value=reviewValue(x,prefix+'_action')||'';sel.disabled=!reviewEditable();
+ sel.onchange=()=>{reviewUndo.delete(x.id+':'+prefix);reviewMutate(x,prefix+'_action',sel.value,tr);if(reviewExpanded.has(x.id))renderLines()};
+ const label=document.createElement('label');label.className='reviewAmountLabel';label.textContent='Valor anual (R$)';
+ const inp=document.createElement('input');inp.className='reviewAmount';inp.dataset.field=prefix+'_annual';inp.type='number';inp.step='0.01';inp.placeholder='A definir';inp.value=reviewValue(x,prefix+'_annual')??'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Valor anual '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.onchange=()=>{const existing=reviewValue(x,prefix+'_months');if(Array.isArray(existing)&&!confirm('Alterar o total anual apagará a distribuição mensal detalhada deste cenário. Continuar?')){inp.value=reviewValue(x,prefix+'_annual')??'';return}reviewUndo.delete(x.id+':'+prefix);reviewMutate(x,prefix+'_annual',inp.value,tr);if(reviewExpanded.has(x.id))renderLines()};
+ container.append(sel,label,inp);return container
+}
+function reviewConsequenceInput(x,tr,prefix){
+ const inp=document.createElement('textarea');inp.className='reviewConsequence';inp.rows=2;inp.maxLength=2000;inp.placeholder='Impacto na entrega, equipe, atendimento ou meta...';inp.value=reviewValue(x,prefix+'_consequence')||'';inp.disabled=!reviewEditable();inp.setAttribute('aria-label','Consequência do cenário '+(prefix==='intermediate'?'intermediário':'severo')+' — '+x.description);inp.oninput=()=>reviewMutate(x,prefix+'_consequence',inp.value,tr);return inp
+}
+
+function reviewMonthsEditor(x,prefix){
+ const wrap=document.createElement('section');wrap.className='reviewMonthlyPanel';
+ const title=document.createElement('h4');title.textContent=(prefix==='intermediate'?'Intermediário':'Severo')+' · distribuição mensal';
+ wrap.append(title);
+ const hint=document.createElement('p');hint.className='reviewMini';
+ hint.textContent='Distribuição inicial sugerida a partir da base. Altere os meses para atualizar o total anual; os dados não são gravados automaticamente.';
+ wrap.append(hint);
+ const controls=document.createElement('div');controls.className='reviewMonthControls';
+ const label=document.createElement('label');label.textContent='Replicar janeiro para fevereiro–dezembro';
+ const mode=document.createElement('select');mode.setAttribute('aria-label','Modo de replicação '+prefix+' '+x.description);
+ for(const spec of [['ratio','Mesma variação percentual'],['value','Mesmo valor de janeiro'],['delta','Mesma diferença em reais']]){
+  const opt=document.createElement('option');opt.value=spec[0];opt.textContent=spec[1];mode.append(opt)
+ }
+ label.append(mode);controls.append(label);
+ const apply=document.createElement('button');apply.className='action secondary';apply.type='button';apply.textContent='Replicar janeiro';
+ apply.disabled=!reviewEditable()||!reviewValue(x,prefix+'_action');apply.onclick=()=>reviewReplicateJanuary(x,prefix,mode.value);controls.append(apply);
+ const undo=document.createElement('button');undo.className='action secondary';undo.type='button';undo.textContent='Desfazer replicação';
+ undo.disabled=!reviewEditable()||!reviewUndo.has(x.id+':'+prefix);undo.dataset.reviewUndo=x.id+':'+prefix;undo.onclick=()=>reviewUndoReplicate(x,prefix);controls.append(undo);
+ wrap.append(controls);
+ const scroller=document.createElement('div');scroller.className='reviewMonthTableWrap';
+ const table=document.createElement('table');table.className='reviewMonthTable';
+ const header=document.createElement('thead'),headerRow=document.createElement('tr');
+ for(const t of ['Mês','Orçamento-base','Proposta','Diferença']){
+  const th=document.createElement('th');th.textContent=t;headerRow.append(th)
+ }
+ header.append(headerRow);table.append(header);
+ const tbody=document.createElement('tbody');
+ const base=reviewBaseMonths(x),values=reviewEffectiveMonths(x,prefix);
+ for(let i=0;i<12;i++){
+  const tr=document.createElement('tr');
+  const month=document.createElement('td');month.textContent=months[i]||String(i+1);tr.append(month);
+  const original=document.createElement('td');original.textContent=br(base[i]);tr.append(original);
+  const cell=document.createElement('td'),input=document.createElement('input');
+  input.type='number';input.step='0.01';input.className='reviewMonthInput';input.value=values[i].toFixed(2);
+  input.disabled=!reviewEditable()||!reviewValue(x,prefix+'_action');
+  input.setAttribute('aria-label','Valor proposto '+(months[i]||i+1)+' '+prefix);
+  const diff=document.createElement('td');diff.textContent=br(reviewRound(values[i]-base[i]));
+  input.oninput=()=>{
+   if(input.value.trim()===''||!Number.isFinite(Number(input.value)))return;
+   const main=document.querySelector('[data-line-id="'+x.id+'"]');if(!main)return;
+   reviewSetMonth(x,prefix,i,input.value,main);
+   diff.textContent=br(reviewRound(Number(input.value)-base[i]))
+  };
+  cell.append(input);tr.append(cell,diff);tbody.append(tr)
+ }
+ table.append(tbody);scroller.append(table);wrap.append(scroller);
+ const total=document.createElement('strong');total.className='reviewMonthTotal';total.dataset.monthlyTotal=x.id+':'+prefix;
+ total.textContent='Total anual: '+br(reviewRound(values.reduce((a,b)=>a+b,0)));wrap.append(total);
+ return wrap
+}
+function reviewDetail(x){
+ const detail=document.createElement('tr');detail.className='reviewDetails';detail.dataset.lineDetail=x.id;
+ const td=document.createElement('td');td.colSpan=8;const grid=document.createElement('div');grid.className='reviewDetailGrid';
+ for(const [field,title,placeholder] of [['justification','Justificativa técnica e operacional','Necessidade, premissas do custo, entregas, risco de não executar e relação com os RKs'],['alternative','Alternativas adicionais / redesenho','Opções de renegociação, compartilhamento, substituição e seus impactos']]){
+  const label=document.createElement('label');label.textContent=title;const input=document.createElement('textarea');input.rows=3;input.maxLength=4000;input.value=reviewValue(x,field)||'';input.placeholder=placeholder;input.disabled=!reviewEditable();input.setAttribute('aria-label',title+' — '+x.description);
+  input.oninput=()=>{const main=td.parentNode.previousElementSibling;reviewMutate(x,field,input.value,main)};label.append(input);grid.append(label)
+ }
+ td.append(grid);
+ const monthGrid=document.createElement('div');monthGrid.className='reviewMonthGrid';monthGrid.append(reviewMonthsEditor(x,'intermediate'),reviewMonthsEditor(x,'severe'));td.append(monthGrid);
+ const info=document.createElement('p');info.className='reviewMini';info.textContent='Os valores da base 2027 continuam preservados. Os ajustes intermediário e severo são propostas separadas, não substituições da Planilha Mestra.';td.append(info);
+ if(profile?.role==='admin'){
+  const btn=document.createElement('button');btn.className='action secondary';btn.style.marginTop='8px';btn.textContent='Edição avançada dos 12 meses (somente admin)';
+  btn.onclick=()=>{if(reviewChanges().length&&!confirm('Há análises não salvas. Antes de editar a base mensal, salve ou descarte as revisões. Continuar poderá perder esses ajustes.'))return;editLine(x)};
+  td.append(btn)
+ }
+ detail.append(td);return detail
+}
+function renderLines(){
+ const tbody=$('lines');tbody.replaceChildren();
+ const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;
+ const visible=lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(reviewValue(x,'justification')||'').trim())));
+ for(const x of visible){
+  const tr=document.createElement('tr');tr.dataset.lineId=x.id;tr.classList.toggle('reviewChanged',reviewLineDirty(x));
+  const tdName=document.createElement('td');tdName.className='reviewName';
+  const toggle=document.createElement('button');toggle.className='action secondary reviewExpand';toggle.textContent=reviewExpanded.has(x.id)?'▾ Fechar detalhes':'▸ Justificativa e meses';toggle.setAttribute('aria-expanded',reviewExpanded.has(x.id)?'true':'false');
+  toggle.onclick=()=>{if(reviewExpanded.has(x.id))reviewExpanded.delete(x.id);else reviewExpanded.add(x.id);renderLines()};
+  const name=document.createElement('div');name.textContent=x.description;
+  tdName.append(toggle,name);tr.append(tdName);
+  const type=document.createElement('td');type.textContent=x.category==='revenue'?'Receita':'Despesa';tr.append(type);
+  const amount=document.createElement('td');amount.textContent=br(annual(x));amount.className='reviewValue';tr.append(amount);
+  const status=document.createElement('td');status.className='reviewStatus';status.dataset.reviewStatus='true';status.textContent=reviewStatusText(x);tr.append(status);
+  for(const prefix of ['intermediate','severe']){
+   const options=document.createElement('td');options.append(reviewScenarioOptions(x,tr,prefix));tr.append(options);
+   const consequence=document.createElement('td');consequence.append(reviewConsequenceInput(x,tr,prefix));tr.append(consequence)
+  }
+  tbody.append(tr);if(reviewExpanded.has(x.id))tbody.append(reviewDetail(x))
+ }
+ if(!visible.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=8;td.textContent='Nenhuma rubrica encontrada para os filtros atuais.';tr.append(td);tbody.append(tr)}
+ reviewRefreshCounts()
+}
+async function saveReviews(){
+ if(reviewSaving||!reviewEditable())return;const changed=reviewChanges();if(!changed.length)return;
+ const payload=[];
+ for(const x of changed){
+  const d={};for(const field of REVIEW_FIELDS)d[field]=reviewValue(x,field);
+  for(const prefix of ['intermediate','severe']){
+   const monthList=d[prefix+'_months'];if(monthList!==null&&monthList!==undefined){if(!Array.isArray(monthList)||monthList.length!==12||monthList.some(v=>!Number.isFinite(Number(v))))return notice('Distribuição mensal inválida em '+x.description,true);d[prefix+'_months']=monthList.map(v=>Number(Number(v).toFixed(2)))}else d[prefix+'_months']=null;
+   const raw=d[prefix+'_annual'],value=raw===null||raw===undefined||String(raw).trim()===''?null:Number(raw);
+   if(value!==null&&(!Number.isFinite(value)||Math.abs(value)>99999999999999))return notice('Valor anual inválido na rubrica: '+x.description,true);
+   if(value!==null&&!d[prefix+'_action'])return notice('Selecione a ação de '+prefix+' para '+x.description,true);
+   if(d[prefix+'_action']==='eliminar'&&value!==null&&Math.abs(value)>0.001)return notice('Eliminar exige valor anual igual a zero: '+x.description,true);
+   d[prefix+'_annual']=value;
+   if(d[prefix+'_months']&&Number((d[prefix+'_months'].reduce((a,b)=>a+b,0)).toFixed(2))!==Number(value?.toFixed(2)))return notice('O valor anual deve corresponder à soma dos 12 meses: '+x.description,true)
+  }
+  payload.push({line_id:x.id,line_updated_at:x.updated_at,scenario_updated_at:x.scenario_updated_at||null,...d})
+ }
+ reviewSaving=true;renderLines();$('reviewFeedback').textContent='Salvando '+payload.length+' rubrica(s)...';
+ let result;
+ try{result=await db.rpc('obz_save_line_scenario_reviews',{p_center:current.id,p_reviews:payload})}
+ catch(error){result={error:{message:error.message||'Falha de comunicação'}}}
+ reviewSaving=false;
+ if(result.error){renderLines();$('reviewFeedback').textContent='Nenhuma rubrica do lote foi alterada: '+result.error.message;notice('Falha ao salvar revisões: '+result.error.message,true);return}
+ reviewDrafts.clear();reviewUndo.clear();
+ await chooseCenter();
+ $('reviewFeedback').textContent=Number(result.data)+' rubrica(s) salvas com sucesso, com auditoria.';
+ notice('Análises salvas no Supabase. Esforço máximo 2027 preservado.')
+}
+function canExportPackage(){
+ return !!profile&&!!current&&loadedReviewCenter===current.id&&lines.length>0&&!reviewSaving&&!reviewChanges().length;
+}
+
+function packagePrintMarkup(center,rows,generatedAt,strategy){
+ const html=value=>String(value??'').replace(/[&<>"']/g,char=>({
+  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+ })[char]);
+ const links=strategy?[
+  ['Objetivos estratégicos',strategy.objectives],
+  ['Resultados-chave',strategy.krs],
+  ['Metas do portfólio',strategy.portfolio]
+ ].filter(([,items])=>items.length).map(([label,items])=>
+  '<p><strong>'+label+'</strong> '+items.map(html).join(' · ')+'</p>'
+ ).join(''):'';
+ const totalKeys=['base','intermediate','severe'];
+ const totalLabels=['Esforço máximo','Cenário intermediário','Cenário severo'];
+ const totals=Object.fromEntries(totalKeys.map(key=>[key,{revenue:0,expense:0}]));
+ const hasAmount=value=>value!==null&&value!==undefined&&String(value).trim()!=='';
+ const scenarioCell=(row,key)=>{
+  const action=REVIEW_ACTIONS.find(([value])=>value&&value===row[key+'_action'])?.[1];
+  const amount=row[key+'_annual'];
+  return [action,hasAmount(amount)?br(amount):null].filter(Boolean).map(html).join(' · ')||'A definir';
+ };
+ const detail=rows.map(row=>{
+  const base=annual(row);
+  for(const key of totalKeys){
+   const amount=row[key+'_annual'];
+   totals[key][row.category]+=key==='base'||!hasAmount(amount)?base:Number(amount);
+  }
+  const notes=[['Justificativa',row.justification],['Alternativa',row.alternative]]
+   .filter(([,value])=>String(value??'').trim())
+   .map(([label,value])=>'<p class="print-note"><strong>'+label+'</strong> '+html(value)+'</p>').join('');
+  const monthly=['intermediate','severe'].map((key,index)=>{
+   const values=row[key+'_months'];
+   if(!Array.isArray(values)||values.length!==12)return '';
+   return '<p><strong>'+totalLabels[index+1]+' · meses</strong> '+values.map((value,i)=>months[i]+' '+br(value)).join(' · ')+'</p>';
+  }).join('');
+  return '<tr><td>'+html(row.description)+'<br><small>'+(row.category==='revenue'?'Receita':'Despesa')+'</small></td>'+
+   '<td>'+br(base)+'</td><td>'+scenarioCell(row,'intermediate')+'</td><td class="print-note">'+html(row.intermediate_consequence||'—')+'</td>'+
+   '<td>'+scenarioCell(row,'severe')+'</td><td class="print-note">'+html(row.severe_consequence||'—')+'</td></tr>'+
+   (notes||monthly?'<tr><td colspan="6">'+notes+monthly+'</td></tr>':'');
+ }).join('');
+ const summary=totalKeys.map((key,i)=>{
+  const {revenue,expense}=totals[key];
+  return '<tr><th scope="row">'+totalLabels[i]+'</th><td>'+br(revenue)+'</td><td>'+br(expense)+'</td><td>'+br(revenue-expense)+'</td></tr>';
+ }).join('');
+ return '<p><strong>CDL Novo Hamburgo · Orçamento Base Zero 2027</strong></p><h1>'+html(center.name)+'</h1>'+
+  '<p>Pacote de decisão · '+html(statusLabel(center.status))+' · '+rows.length+' rubrica(s)</p><p>Gerado em '+html(generatedAt)+'</p>'+
+  '<h2>Resumo financeiro anual</h2><table><thead><tr><th>Cenário</th><th>Receitas</th><th>Despesas</th><th>Resultado</th></tr></thead><tbody>'+summary+'</tbody></table>'+
+  '<p>Nos totais dos cenários, rubricas com valor a definir usam o esforço máximo como referência.</p>'+
+  (links?'<h2>Vínculos estratégicos</h2>'+links:'')+
+  '<h2>Revisão das rubricas</h2><table><colgroup><col style="width:22%"><col style="width:12%"><col style="width:13%"><col style="width:20%"><col style="width:13%"><col style="width:20%"></colgroup>'+
+  '<thead><tr><th>Rubrica</th><th>Esforço máximo</th><th>Intermediário</th><th>Consequência do ajuste</th><th>Severo</th><th>Consequência do ajuste</th></tr></thead><tbody>'+detail+'</tbody></table>';
+}
+
+$('exportPackagePdf').onclick=()=>{
+ if(!canExportPackage())return;
+ const generatedAt=new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date());
+ const report=$('packagePrint');
+ const strategy=strategyReady&&strategyCenterId===current.id?{
+  objectives:[...strategySaved.objectives].map(code=>strategyCatalog.objectives.find(item=>item.code===code)?.title||code),
+  krs:[...strategySaved.krs].map(code=>strategyCatalog.krs.find(item=>item.code===code)?.indicator||code),
+  portfolio:[...strategySaved.portfolio].map(key=>strategyCatalog.portfolio.find(item=>item.target_key===key)?.metric||key)
+ }:null;
+ report.innerHTML=packagePrintMarkup(current,lines,generatedAt,strategy);
+ document.body.classList.add('printing-package');
+ report.removeAttribute('aria-hidden');
+ const title=document.title;
+ document.title='OBZ 2027 - '+current.name;
+ try{window.print()}
+ finally{document.body.classList.remove('printing-package');document.title=title;report.replaceChildren();report.setAttribute('aria-hidden','true')}
+};
+
+$('reviewSaveAll').onclick=saveReviews;$('reviewSaveBottom').onclick=saveReviews;
+$('reviewDiscard').onclick=()=>{if(!reviewChanges().length)return;if(!confirm('Descartar todas as alterações ainda não salvas deste pacote?'))return;reviewDrafts.clear();reviewUndo.clear();renderLines();$('reviewFeedback').textContent='Alterações locais descartadas.'};
 async function checkMasterSource(force=false){
  if(!db||profile?.role!=='admin'||masterChecking)return;
  if(!force&&Date.now()-masterLastAttempt<10*60*1000)return;
@@ -259,8 +656,48 @@ function renderExecutiveChart(){
   const label=document.createElement('small');label.textContent=x.m;cell.append(pair,label);host.append(cell)
  }
 }
-function editLine(x){editing=x;tab('pacotes');$('editor').classList.remove('hidden');$('lineTitle').textContent=x.description;$('justification').value=x.justification||'';$('alternative').value=x.alternative||'';const holder=$('months');holder.replaceChildren();months.forEach((m,i)=>{const l=document.createElement('label');l.textContent=m;const inp=document.createElement('input');inp.type='number';inp.step='0.01';inp.value=Number(x.months[i]);inp.dataset.month=i;inp.disabled=profile.role!=='admin';l.append(inp);holder.append(l)});$('save').disabled=current.status==='approved'||!(profile.role==='admin'||['draft','changes_requested'].includes(current.status));$('editor').scrollIntoView({behavior:'smooth',block:'start'})}
-$('editForm').onsubmit=async e=>{e.preventDefault();if(!editing)return;const values=[...document.querySelectorAll('[data-month]')].map(x=>Number(x.value));if(values.some(x=>!Number.isFinite(x)))return notice('Valores mensais inválidos.',true);if(current.status==='approved'||(profile.role!=='admin'&&!['draft','changes_requested'].includes(current.status)))return notice('Pacote bloqueado para edição neste estado.',true);const r=profile.role==='admin'?await db.from('obz_lines').update({months:values,justification:$('justification').value,alternative:$('alternative').value,updated_at:new Date().toISOString()}).eq('id',editing.id).eq('center_id',current.id):await db.rpc('obz_update_justification',{p_line:editing.id,p_justification:$('justification').value,p_alternative:$('alternative').value});if(r.error)return notice('Não foi possível salvar: '+r.error.message,true);await chooseCenter();notice('Análise salva.')};
+function editLine(x){if(reviewChanges().length)return notice('Salve ou descarte suas revisões de cenários antes de editar a base.',true);editing=x;baseJanuaryUndo=null;$('baseUndoJanuary').disabled=true;$('baseReplicateNotice').textContent='';tab('pacotes');$('editor').classList.remove('hidden');$('lineTitle').textContent=x.description;$('justification').value=x.justification||'';$('alternative').value=x.alternative||'';const holder=$('months');holder.replaceChildren();months.forEach((m,i)=>{const l=document.createElement('label');l.textContent=m;const inp=document.createElement('input');inp.type='number';inp.step='0.01';inp.value=Number(x.months[i]);inp.dataset.month=i;inp.disabled=profile.role!=='admin'||!reviewEditable();inp.oninput=()=>{baseJanuaryUndo=null;$('baseUndoJanuary').disabled=true};l.append(inp);holder.append(l)});$('save').disabled=profile.role!=='admin'||!reviewEditable();$('baseRepeatJanuary').disabled=profile.role!=='admin'||!reviewEditable();$('editor').scrollIntoView({behavior:'smooth',block:'start'})}
+$('baseRepeatJanuary').onclick=()=>{
+ if(profile?.role!=='admin'||!reviewEditable()||!editing)return;
+ const inputs=[...document.querySelectorAll('#months [data-month]')];if(inputs.length!==12)return;
+ const jan=Number(inputs[0].value);
+ if(!Number.isFinite(jan))return notice('O valor de janeiro está inválido.',true);
+ const original=editing.months.map(Number),mode=$('baseJanuaryMode').value;
+ if(mode==='ratio'&&Math.abs(original[0])<0.0000001)return notice('Janeiro original é zero. Escolha mesmo valor ou mesma diferença em R$.',true);
+ let values=original.map(v=>reviewRound(v));
+ if(mode==='ratio')values=original.map(v=>reviewRound(v*jan/original[0]));
+ if(mode==='value')values=Array(12).fill(reviewRound(jan));
+ if(mode==='delta')values=original.map(v=>reviewRound(v+(jan-original[0])));
+ values[0]=reviewRound(jan);
+ const newAnnual=reviewRound(values.reduce((a,b)=>a+b,0));
+ if(!confirm('Replicar a regra de janeiro para os 12 meses da BASE OFICIAL?\n\nValor-base anual anterior: '+br(annual(editing))+'\nNovo total anual: '+br(newAnnual)+'\nDiferença: '+br(newAnnual-annual(editing))+'\n\nA base só será alterada quando você clicar em Salvar análise.'))return;
+ baseJanuaryUndo=inputs.map(inp=>inp.value);
+ inputs.forEach((inp,i)=>inp.value=values[i].toFixed(2));
+ $('baseUndoJanuary').disabled=false;
+ $('baseReplicateNotice').textContent='Replicação aplicada apenas no formulário. Confira antes de salvar.'
+};
+$('baseUndoJanuary').onclick=()=>{
+ if(!baseJanuaryUndo)return;
+ const inputs=[...document.querySelectorAll('#months [data-month]')];
+ inputs.forEach((inp,i)=>inp.value=baseJanuaryUndo[i]);
+ baseJanuaryUndo=null;$('baseUndoJanuary').disabled=true;
+ $('baseReplicateNotice').textContent='Replicação da base desfeita antes de salvar.'
+};
+$('editForm').onsubmit=async e=>{
+ e.preventDefault();
+ if(!editing||!current||profile?.role!=='admin'||!reviewEditable())return notice('Sem permissão para alterar a base mensal.',true);
+ const baseInputs=[...document.querySelectorAll('#months [data-month]')];
+ if(baseInputs.length!==12||baseInputs.some(input=>input.value.trim()===''))return notice('Informe os 12 valores mensais da base antes de salvar.',true);
+ const values=baseInputs.map(x=>Number(x.value));
+ if(values.some(x=>!Number.isFinite(x)))return notice('Valores mensais inválidos.',true);
+ const edited=values.some((v,i)=>reviewRound(v)!==reviewRound(editing.months[i]));
+ if(edited&&!confirm('Você está modificando os 12 meses da base oficial, não um cenário. Essa alteração causará divergência com a Planilha Mestra e requer atualização controlada. Confirmar?'))return;
+ const {data,error}=await db.from('obz_lines')
+ .update({months:values.map(reviewRound),justification:$('justification').value,alternative:$('alternative').value,updated_at:new Date().toISOString()})
+ .eq('id',editing.id).eq('center_id',current.id).eq('updated_at',editing.updated_at).select('id');
+ if(error||!data?.length)return notice('Falha ao salvar ou rubrica alterada por outra sessão: '+(error?.message||'Atualize os dados.'),true);
+ baseJanuaryUndo=null;$('editor').classList.add('hidden');await chooseCenter();notice('Base mensal atualizada com registro de auditoria.')
+};
 function renderWorkflow(){const host=$('workflow');host.replaceChildren();const statuses=['draft','submitted','in_review','changes_requested','approved'];for(const s of statuses){const el=document.createElement('span');el.className='step'+(s===current.status?' active':'');el.textContent=statusLabel(s);host.append(el)}}
 function readinessState(){
  const missing=lines.filter(l=>!String(l.justification||'').trim()).length;
