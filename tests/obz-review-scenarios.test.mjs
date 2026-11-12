@@ -26,12 +26,12 @@ test('JavaScript compilável e controles distintos para base oficial e cenários
  assert.match(html,/id="baseUndoJanuary"/);
  assert.match(js,/reviewChanges\(\)\.length/);
 });
-function scenarioLogic(initial,jan=90){
+function scenarioLogic(initial,jan=90,baseJan=100){
  const start=js.indexOf('function reviewRound('),stop=js.indexOf('function reviewScenarioOptions(',start);
  assert.ok(start>0&&stop>start);
  const input={
   id:'id-1',description:'Testes',category:'expense',
-  months:[100,120,80,130,100,90,110,100,120,80,90,100],
+  months:[baseJan,120,80,130,100,90,110,100,120,80,90,100],
   intermediate_action:'reduzir',
   intermediate_annual:null,
   intermediate_months:null
@@ -74,7 +74,7 @@ test('replicar diferença absoluta conserva o desvio de R$10 em cada mês',()=>{
  assert.equal(result[0],90);assert.equal(result[1],110);assert.equal(result[2],70)
 });
 test('sem base de janeiro não calcula percentual artificial',()=>{
- const {result,ctx}=scenarioLogic('ratio',0);
- assert.ok(result,'Zero Jan proposal is valid when baseline nonzero');
- assert.equal(ctx.error,undefined)
+ const {result,ctx}=scenarioLogic('ratio',0,0);
+ assert.equal(result,null);
+ assert.match(ctx.error,/A base de janeiro é zero/)
 });
