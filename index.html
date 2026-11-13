@@ -269,7 +269,7 @@ window.addEventListener('beforeunload',e=>{if((reviewChanges().length&&!reviewSa
 async function loadCenters(){const r=await db.from('obz_centers').select('id,name,status,manager_id').eq('fiscal_year',2027).order('name');if(r.error)return notice('Erro ao carregar pacotes: '+r.error.message,true);centers=r.data||[];for(const c of centers){if(aclDrafts.has(c.id)&&aclDrafts.get(c.id)===(c.manager_id||''))aclDrafts.delete(c.id)}if(profile.role==='admin')await loadManagerCandidates();if(profile.role==='admin')renderExecutiveCenterOptions();const select=$('centers');select.replaceChildren();for(const c of centers){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.append(o)}$('packageOverview').replaceChildren();for(const c of centers){const p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status);$('packageOverview').append(p)}if(profile.role==='admin'){renderAcl();await loadConsolidated();checkMasterSource(false)}if(!centers.length){$('empty').classList.remove('hidden');$('empty').textContent='Nenhum pacote atribuído a este usuário.';$('revenue').textContent='—';$('expense').textContent='—';$('balance').textContent='—';return}select.value=centers.some(c=>c.id===current?.id)?current.id:centers[0].id;await chooseCenter()}
 $('centers').onchange=async()=>{if(reviewChanges().length&&$('centers').value!==current?.id&&!confirm('Você tem análises de rubricas e cenários ainda não salvas. Trocar de pacote e descartar as alterações?')){$('centers').value=current.id;return}if($('centers').value!==current?.id){reviewDrafts.clear();reviewExpanded.clear();reviewUndo.clear()}if(strategyDirty()&&$('centers').value!==strategyCenterId&&!confirm('Há vínculos estratégicos não salvos. Trocar de pacote e descartar as alterações?')){$('centers').value=strategyCenterId;return}if($('centers').value!==strategyCenterId)strategyReady=false;await chooseCenter()};$('search').oninput=renderLines;$('filter').onchange=renderLines;$('analysisFilter').onchange=renderLines;$('nextPending').onclick=()=>{const x=lines.find(l=>!String(reviewValue(l,'justification')||'').trim());if(!x)return notice('Todas as rubricas deste pacote possuem justificativa técnica.');$('search').value='';$('filter').value='all';$('analysisFilter').value='pending';reviewExpanded.add(x.id);renderLines();const tr=document.querySelector('[data-line-id="'+x.id+'"]');if(tr)tr.scrollIntoView({behavior:'smooth',block:'center'});};
 function statusLabel(s){return({draft:'Rascunho',submitted:'Submetido',in_review:'Em revisão',changes_requested:'Ajustes solicitados',approved:'Aprovado'})[s]||s}
-async function chooseCenter(){loadedReviewCenter=null;$('exportPackagePdf').disabled=true;current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const centerId=current.id;const [r,scenarioResult]=await Promise.all([db.from('obz_lines').select('id,description,category,months,justification,alternative,source_key,updated_at').eq('center_id',centerId).order('description'),db.from('obz_line_scenarios').select('line_id,intermediate_action,intermediate_annual,intermediate_months,intermediate_consequence,severe_action,severe_annual,severe_months,severe_consequence,updated_at').eq('center_id',centerId)]);if(current?.id!==centerId)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);if(scenarioResult.error)return notice('Erro ao carregar os cenários das rubricas: '+scenarioResult.error.message,true);loadedReviewCenter=centerId;const savedScenarios=new Map((scenarioResult.data||[]).map(x=>[x.line_id,x]));lines=(r.data||[]).map(x=>{const sc=savedScenarios.get(x.id);return {...x,intermediate_action:sc?.intermediate_action||'',intermediate_annual:sc?.intermediate_annual??null,intermediate_months:sc?.intermediate_months??null,intermediate_consequence:sc?.intermediate_consequence||'',severe_action:sc?.severe_action||'',severe_annual:sc?.severe_annual??null,severe_months:sc?.severe_months??null,severe_consequence:sc?.severe_consequence||'',scenario_updated_at:sc?.updated_at??null}});const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
+async function chooseCenter(){loadedReviewCenter=null;$('exportPackagePdf').disabled=true;current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const centerId=current.id;const [r,scenarioResult]=await Promise.all([db.from('obz_lines').select('id,description,category,months,justification,alternative,composition_note,source_key,updated_at').eq('center_id',centerId).order('description'),db.from('obz_line_scenarios').select('line_id,intermediate_action,intermediate_annual,intermediate_months,intermediate_consequence,severe_action,severe_annual,severe_months,severe_consequence,updated_at').eq('center_id',centerId)]);if(current?.id!==centerId)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);if(scenarioResult.error)return notice('Erro ao carregar os cenários das rubricas: '+scenarioResult.error.message,true);loadedReviewCenter=centerId;const savedScenarios=new Map((scenarioResult.data||[]).map(x=>[x.line_id,x]));lines=(r.data||[]).map(x=>{const sc=savedScenarios.get(x.id);return {...x,intermediate_action:sc?.intermediate_action||'',intermediate_annual:sc?.intermediate_annual??null,intermediate_months:sc?.intermediate_months??null,intermediate_consequence:sc?.intermediate_consequence||'',severe_action:sc?.severe_action||'',severe_annual:sc?.severe_annual??null,severe_months:sc?.severe_months??null,severe_consequence:sc?.severe_consequence||'',scenario_updated_at:sc?.updated_at??null}});const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
 let loadedReviewCenter=null;
 const REVIEW_FIELDS=['justification','alternative','intermediate_action','intermediate_annual','intermediate_months','intermediate_consequence','severe_action','severe_annual','severe_months','severe_consequence'];
@@ -463,7 +463,7 @@ function reviewDetail(x){
   reviewMutate(x,'justification',justification.value,main);
   reviewMutate(x,'alternative',alternative.value,main);
  }));
- td.append(grid);
+ td.append(compositionNoteControl(x,reviewEditable()),grid);
  const monthGrid=document.createElement('div');monthGrid.className='reviewMonthGrid';monthGrid.append(reviewMonthsEditor(x,'intermediate'),reviewMonthsEditor(x,'severe'));td.append(monthGrid);
  const info=document.createElement('p');info.className='reviewMini';info.textContent='Os valores da base 2027 continuam preservados. Os ajustes intermediário e severo são propostas separadas, não substituições da Planilha Mestra.';td.append(info);
  if(profile?.role==='admin'){
@@ -553,7 +553,7 @@ function packagePrintMarkup(center,rows,generatedAt,strategy){
    const amount=row[key+'_annual'];
    totals[key][row.category]+=key==='base'||!hasAmount(amount)?base:Number(amount);
   }
-  const notes=[['Justificativa',row.justification],['Alternativa',row.alternative]]
+  const notes=[['Nota de composição',row.composition_note],['Justificativa',row.justification],['Alternativa',row.alternative]]
    .filter(([,value])=>String(value??'').trim())
    .map(([label,value])=>'<p class="print-note"><strong>'+label+'</strong> '+html(value)+'</p>').join('');
   const monthly=['intermediate','severe'].map((key,index)=>{
@@ -663,6 +663,52 @@ function renderExecutiveChart(){
   }
   const label=document.createElement('small');label.textContent=x.m;cell.append(pair,label);host.append(cell)
  }
+}
+function compositionNoteControl(rubric,editable){
+ const section=document.createElement('section');
+ const label=document.createElement('label');
+ label.textContent='Nota de composição da rubrica';
+ const field=document.createElement('textarea');
+ field.rows=3;
+ field.maxLength=4000;
+ field.placeholder='Registre o que está incluído, a base de cálculo, o rateio ou a fonte da premissa.';
+ field.value=rubric.composition_note??'';
+ field.readOnly=!editable;
+ label.append(field);
+ const feedback=document.createElement('small');
+ feedback.setAttribute('role','status');
+ const save=document.createElement('button');
+ save.type='button';
+ save.className='action secondary';
+ save.textContent='Salvar nota';
+ const changed=()=>field.value.trim()!==(rubric.composition_note??'');
+ save.disabled=true;
+ field.oninput=()=>{save.disabled=!changed();feedback.textContent=changed()?'Nota ainda não salva.':''};
+ save.onclick=async()=>{
+  if(!changed())return;
+  const note=field.value.trim()||null;
+  field.readOnly=true;
+  save.disabled=true;
+  feedback.textContent='Salvando nota…';
+  try{
+   const result=await db.rpc('obz_save_composition_note',{
+    p_line:rubric.id,p_note:note,p_previous_note:rubric.composition_note??null
+   });
+   if(result.error)throw result.error;
+   rubric.composition_note=note;
+   field.value=note??'';
+   feedback.textContent='Nota salva.';
+  }catch(error){
+   feedback.textContent='Não foi possível salvar: '+error.message;
+  }finally{
+   field.readOnly=false;
+   save.disabled=!changed();
+  }
+ };
+ section.append(label);
+ if(editable)section.append(save);
+ section.append(feedback);
+ return section;
 }
 function reuseAnalysisControl(rubric,apply){
  const label=document.createElement('label');
