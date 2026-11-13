@@ -455,6 +455,14 @@ function reviewDetail(x){
   const label=document.createElement('label');label.textContent=title;const input=document.createElement('textarea');input.rows=3;input.maxLength=4000;input.value=reviewValue(x,field)||'';input.placeholder=placeholder;input.disabled=!reviewEditable();input.setAttribute('aria-label',title+' — '+x.description);
   input.oninput=()=>{const main=td.parentNode.previousElementSibling;reviewMutate(x,field,input.value,main)};label.append(input);grid.append(label)
  }
+ if(reviewEditable())td.append(reuseAnalysisControl(x,source=>{
+  const main=detail.previousElementSibling;
+  const [justification,alternative]=grid.querySelectorAll('textarea');
+  justification.value=source.justification;
+  alternative.value=source.alternative||'';
+  reviewMutate(x,'justification',justification.value,main);
+  reviewMutate(x,'alternative',alternative.value,main);
+ }));
  td.append(grid);
  const monthGrid=document.createElement('div');monthGrid.className='reviewMonthGrid';monthGrid.append(reviewMonthsEditor(x,'intermediate'),reviewMonthsEditor(x,'severe'));td.append(monthGrid);
  const info=document.createElement('p');info.className='reviewMini';info.textContent='Os valores da base 2027 continuam preservados. Os ajustes intermediário e severo são propostas separadas, não substituições da Planilha Mestra.';td.append(info);
@@ -655,6 +663,31 @@ function renderExecutiveChart(){
   }
   const label=document.createElement('small');label.textContent=x.m;cell.append(pair,label);host.append(cell)
  }
+}
+function reuseAnalysisControl(rubric,apply){
+ const label=document.createElement('label');
+ label.textContent='Como preencher a justificativa e o impacto';
+ const select=document.createElement('select');
+ select.setAttribute('aria-label','Preenchimento da análise — '+rubric.description);
+ select.add(new Option('Preencher manualmente',''));
+ for(const source of lines){
+  if(source.id===rubric.id||!String(source.justification??'').trim())continue;
+  select.add(new Option('Reaproveitar: '+source.description+(source.source_key?' · '+source.source_key:''),source.id));
+ }
+ select.onchange=()=>{
+  const source=lines.find(line=>line.id===select.value);
+  if(!source)return;
+  apply(source);
+  select.value='';
+  feedback.textContent='Textos de “'+source.description+'” copiados. Revise e salve a análise.';
+ };
+ const feedback=document.createElement('small');
+ feedback.setAttribute('role','status');
+ feedback.textContent=select.options.length>1
+  ?'Escolha uma rubrica com análise salva neste pacote. Os textos copiados podem ser editados.'
+  :'Salve a justificativa de outra rubrica deste pacote para reaproveitá-la aqui.';
+ label.append(select,feedback);
+ return label;
 }
 function editLine(x){if(reviewChanges().length)return notice('Salve ou descarte suas revisões de cenários antes de editar a base.',true);editing=x;baseJanuaryUndo=null;$('baseUndoJanuary').disabled=true;$('baseReplicateNotice').textContent='';tab('pacotes');$('editor').classList.remove('hidden');$('lineTitle').textContent=x.description;$('justification').value=x.justification||'';$('alternative').value=x.alternative||'';const holder=$('months');holder.replaceChildren();months.forEach((m,i)=>{const l=document.createElement('label');l.textContent=m;const inp=document.createElement('input');inp.type='number';inp.step='0.01';inp.value=Number(x.months[i]);inp.dataset.month=i;inp.disabled=profile.role!=='admin'||!reviewEditable();inp.oninput=()=>{baseJanuaryUndo=null;$('baseUndoJanuary').disabled=true};l.append(inp);holder.append(l)});$('save').disabled=profile.role!=='admin'||!reviewEditable();$('baseRepeatJanuary').disabled=profile.role!=='admin'||!reviewEditable();$('editor').scrollIntoView({behavior:'smooth',block:'start'})}
 $('baseRepeatJanuary').onclick=()=>{
