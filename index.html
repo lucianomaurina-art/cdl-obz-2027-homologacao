@@ -19,6 +19,11 @@
 .strategy-picks input[type=checkbox]{width:auto;flex-shrink:0;margin:3px 0 0}
 .strategy-summary{margin:12px 0;padding:10px;background:#f2f6fc;border-radius:8px}
 @media(max-width:850px){.strategy-grid{grid-template-columns:1fr}.strategy-picks{max-height:195px}}
+.rubric-actions{display:flex;flex-wrap:wrap;gap:6px}
+#rubricNoteDialog{width:min(560px,calc(100% - 28px));border:1px solid #cbd9e5;border-radius:12px;padding:20px;color:inherit}
+#rubricNoteDialog::backdrop{background:#102a4366}
+#rubricNoteDialog textarea{width:100%;margin-top:6px}
+#rubricNoteDialog [role=status]{display:block;margin-top:6px}
 </style></head><body><header><div><strong>CDL Novo Hamburgo <span style="opacity:.55">/</span> OBZ 2027</strong><small>Gestão Orçamentária · Orçamento Base Zero</small></div><div class="right"><span class="pill">HOMOLOGAÇÃO</span><span id="who" class="user"></span><button id="logout" class="action secondary hidden">Sair</button></div></header>
 <div id="login" class="auth card"><div class="eyebrow">Acesso restrito</div><h2>Entrar na plataforma</h2><p class="muted">Utilize seu acesso da Plataforma de Demandas CDL.</p><form id="loginForm"><label>E-mail<input type="email" name="email" autocomplete="username" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><button class="action" style="width:100%">Entrar</button></form></div>
 <div id="workspace" class="shell hidden"><aside><div class="asideTitle">PLANEJAMENTO 2027</div><button class="nav active" data-tab="painel">Painel executivo</button><button class="nav" data-tab="pacotes">Pacotes de decisão</button><button class="nav" data-tab="cenarios">Cenários</button><button class="nav" data-tab="governanca">Governança</button><button class="nav hidden" data-tab="alcadas">Alçadas e Cadastros</button><div class="asideTitle">FERRAMENTAS</div><a id="adminLink" class="nav hidden" href="./importacao.html" style="display:block;text-decoration:none">↥ &nbsp; Atualização controlada (CSV)</a></aside><main class="content">
@@ -73,6 +78,12 @@
 <tr><td>Colaborador</td><td>Somente se for designado responsável</td><td>Mesma regra operacional do responsável designado</td><td>Submeter, se designado</td></tr>
 </tbody></table></div><p class="muted">Esta matriz apresenta as permissões atualmente implementadas. A parametrização da alçada de aprovação por valor ou por cargo ainda não faz parte do modelo de dados.</p></div>
 </section><p class="foot">CDL Novo Hamburgo · OBZ 2027 · Homologação. Premissas fiscais e créditos são projeções sujeitas à validação contábil.</p><p id="message" role="status"></p></main></div>
+<dialog id="rubricNoteDialog" aria-labelledby="rubricNoteTitle">
+<h2 id="rubricNoteTitle">Nota da rubrica</h2>
+<p id="rubricNoteDescription"></p>
+<div id="rubricNoteContent"></div>
+<form method="dialog"><button class="action secondary">Fechar</button></form>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script>
 'use strict';
 const $=id=>document.getElementById(id),C=window.CDL_CONFIG||{},br=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0),months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],reference={revenue:6477097.47,expense:6908779.62,goal:253000,spcRevenue:3531684.84,spcBalance:424559.22};let db=C.supabaseUrl&&C.supabaseAnonKey&&window.supabase?window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey):null,profile=null,centers=[],current=null,lines=[],editing=null,managerCandidates=[],aclDrafts=new Map(),aclSaving=false,dashboardRows=[],masterChecking=false,masterLastAttempt=0,strategyCatalog={objectives:[],krs:[],portfolio:[]},strategySaved={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyDraft={objectives:new Set(),krs:new Set(),portfolio:new Set()},strategyCenterId=null,strategyReady=false,strategySaving=false,strategySuggestion=null;
@@ -193,7 +204,7 @@ $('centers').onchange=async()=>{if(strategyDirty()&&$('centers').value!==strateg
 function statusLabel(s){return({draft:'Rascunho',submitted:'Submetido',in_review:'Em revisão',changes_requested:'Ajustes solicitados',approved:'Aprovado'})[s]||s}
 async function chooseCenter(){current=centers.find(c=>c.id===$('centers').value);$('editor').classList.add('hidden');if(!current)return;const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,composition_note,source_key').eq('center_id',current.id).order('description');if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await loadAudit();await loadStrategyForCenter();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
-function renderLines(){const tbody=$('lines');tbody.replaceChildren();const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;for(const x of lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(x.justification||'').trim())))){const tr=document.createElement('tr');for(const [value,isNumber] of [[x.description,false],[x.category==='revenue'?'Receita':'Despesa',false],[br(annual(x)),true],[String(x.justification||'').trim()?'Justificada':'Pendente',false]]){const td=document.createElement('td');td.textContent=value;if(isNumber)td.className='num';tr.append(td)}const td=document.createElement('td'),b=document.createElement('button');b.className='action secondary';b.textContent='Analisar';b.onclick=()=>editLine(x);td.append(b);tr.append(td);tbody.append(tr)}if(!tbody.children.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Nenhuma rubrica encontrada.';tr.append(td);tbody.append(tr)}}
+function renderLines(){const tbody=$('lines');tbody.replaceChildren();const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;for(const x of lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(x.justification||'').trim())))){const tr=document.createElement('tr');for(const [value,isNumber] of [[x.description,false],[x.category==='revenue'?'Receita':'Despesa',false],[br(annual(x)),true],[String(x.justification||'').trim()?'Justificada':'Pendente',false]]){const td=document.createElement('td');td.textContent=value;if(isNumber)td.className='num';tr.append(td)}const td=document.createElement('td'),b=document.createElement('button');b.className='action secondary';b.textContent='Analisar';b.onclick=()=>editLine(x);const actions=document.createElement('div');actions.className='rubric-actions';actions.append(b,rubricNoteButton(x));td.append(actions);tr.append(td);tbody.append(tr)}if(!tbody.children.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Nenhuma rubrica encontrada.';tr.append(td);tbody.append(tr)}}
 async function checkMasterSource(force=false){
  if(!db||profile?.role!=='admin'||masterChecking)return;
  if(!force&&Date.now()-masterLastAttempt<10*60*1000)return;
@@ -259,7 +270,27 @@ function renderExecutiveChart(){
   const label=document.createElement('small');label.textContent=x.m;cell.append(pair,label);host.append(cell)
  }
 }
-function compositionNoteControl(rubric,editable){
+function rubricNoteButton(rubric){
+ const button=document.createElement('button');
+ button.type='button';
+ button.className='action secondary';
+ const refresh=()=>{
+  button.textContent=rubric.composition_note?'Ver nota':(['draft','changes_requested'].includes(current?.status)?'Adicionar nota':'Nota da rubrica');
+  button.setAttribute('aria-label',button.textContent+' — '+rubric.description);
+ };
+ refresh();
+ button.onclick=()=>{
+  const dialog=$('rubricNoteDialog');
+  $('rubricNoteDescription').textContent=rubric.description;
+  $('rubricNoteContent').replaceChildren(compositionNoteControl(
+   rubric,['draft','changes_requested'].includes(current?.status),refresh
+  ));
+  dialog.showModal();
+ };
+ return button;
+}
+
+function compositionNoteControl(rubric,editable,onSaved){
  const section=document.createElement('section');
  const label=document.createElement('label');
  label.textContent='Nota de composição da rubrica';
@@ -293,6 +324,7 @@ function compositionNoteControl(rubric,editable){
    rubric.composition_note=note;
    field.value=note??'';
    feedback.textContent='Nota salva.';
+   onSaved?.();
   }catch(error){
    feedback.textContent='Não foi possível salvar: '+error.message;
   }finally{
