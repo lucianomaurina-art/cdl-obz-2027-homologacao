@@ -60,7 +60,7 @@
 <p class="muted">Ao selecionar um RK, o objetivo estratégico correspondente é incluído automaticamente. Catálogos provenientes das planilhas de estratégia e portfólio de 2027; metas e indicadores devem ser validados contra as versões vigentes.</p>
 <div class="toolbar" style="align-items:center"><button id="strategySave" class="action" disabled>Salvar todos os vínculos do pacote</button><button id="strategyDiscard" class="action secondary" disabled>Descartar edições</button><span id="strategyFeedback" class="muted" role="status">Nenhuma alteração pendente.</span></div>
 </div>
-<div class="card"><div class="sectionHead"><h2>Preparação do pacote para análise</h2><span class="pill" id="analysisProgress">0 de 0</span></div><p class="muted">Acompanhe o preenchimento das justificativas técnicas antes da submissão à revisão. Esta etapa não altera os valores importados.</p><div class="meter"><span id="analysisMeter" style="background:#158061"></span></div><p id="analysisSummary" class="muted" role="status">Aguardando seleção do pacote.</p><button id="nextPending" class="action secondary">Analisar próxima rubrica pendente</button></div><div class="card"><div class="sectionHead"><h2>Rubricas e justificativas</h2><span class="pill" id="lineCount">0 rubricas</span></div><div class="tablewrap"><table><thead><tr><th>Rubrica</th><th>Tipo</th><th class="num">Valor anual</th><th>Situação da análise</th><th>Ação</th></tr></thead><tbody id="lines"></tbody></table></div></div><div id="editor" class="card hidden"><h2>Justificativa e alternativas da rubrica</h2><p id="lineTitle" class="muted"></p><form id="editForm"><div id="compositionNote"></div><h3>Distribuição mensal</h3><div id="months" class="monthly"></div><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><div id="reuseAnalysis"></div><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div>
+<div class="card"><div class="sectionHead"><h2>Preparação do pacote para análise</h2><span class="pill" id="analysisProgress">0 de 0</span></div><p class="muted">Revise os valores mensais e salve a justificativa de cada rubrica antes de submeter o pacote.</p><div class="meter"><span id="analysisMeter" style="background:#158061"></span></div><p id="analysisSummary" class="muted" role="status">Aguardando seleção do pacote.</p><button id="nextPending" class="action secondary">Analisar próxima rubrica pendente</button></div><div class="card"><div class="sectionHead"><h2>Rubricas e justificativas</h2><span class="pill" id="lineCount">0 rubricas</span></div><div class="tablewrap"><table><thead><tr><th>Rubrica</th><th>Tipo</th><th class="num">Valor anual</th><th>Situação da análise</th><th>Ação</th></tr></thead><tbody id="lines"></tbody></table></div></div><div id="editor" class="card hidden"><h2>Justificativa e alternativas da rubrica</h2><p id="lineTitle" class="muted"></p><form id="editForm"><div id="compositionNote"></div><h3>Valores mensais da rubrica</h3><p class="muted">Ao salvar, os valores passam a compor a proposta do pacote no OBZ. A atualização da Planilha Mestra é feita à parte.</p><div id="months" class="monthly"></div><p id="rubricAnnualPreview" aria-live="polite"></p><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><div id="reuseAnalysis"></div><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div>
 <div id="packageConclusionCard" class="card hidden"><div class="sectionHead"><h2>Conclusão do refinamento</h2><span id="refinementCount" class="pill">0 refinamentos</span></div>
 <label for="packageConclusion">Conclusão do gestor</label>
 <textarea id="packageConclusion" maxlength="6000" rows="5" placeholder="Descreva os principais ajustes, a economia estimada e as ideias que agregam valor ao pacote."></textarea>
@@ -90,7 +90,7 @@
 <div class="card"><h2>Usuários disponíveis</h2><p class="muted">Perfis ativos já cadastrados na plataforma CDL. A atribuição de um pacote não altera o perfil global do usuário.</p><div class="tablewrap"><table><thead><tr><th>Usuário</th><th>Área</th><th>Perfil atual</th></tr></thead><tbody id="aclUsers"></tbody></table></div></div>
 <div class="card"><h2>Alçadas vigentes</h2><div class="tablewrap"><table><thead><tr><th>Perfil</th><th>Consulta</th><th>Justificativas</th><th>Tramitação</th></tr></thead><tbody>
 <tr><td>Administrador</td><td>Todos os pacotes</td><td>Pode editar e revisar rubricas, conforme bloqueios de estado</td><td>Revisão e aprovação</td></tr>
-<tr><td>Gestor responsável</td><td>Somente pacotes atribuídos</td><td>Justificativas e alternativas em rascunho/ajustes</td><td>Submeter para análise</td></tr>
+<tr><td>Gestor responsável</td><td>Somente pacotes atribuídos</td><td>Valores mensais, justificativas e alternativas em rascunho/ajustes</td><td>Submeter para análise</td></tr>
 <tr><td>Colaborador</td><td>Somente se for designado responsável</td><td>Mesma regra operacional do responsável designado</td><td>Submeter, se designado</td></tr>
 </tbody></table></div><p class="muted">Esta matriz apresenta as permissões atualmente implementadas. A parametrização da alçada de aprovação por valor ou por cargo ainda não faz parte do modelo de dados.</p></div>
 </section><p class="foot">CDL Novo Hamburgo · OBZ 2027 · Homologação. Premissas fiscais e créditos são projeções sujeitas à validação contábil.</p><p id="message" role="status"></p></main></div>
@@ -229,7 +229,7 @@ refinementsReady=false;
 lines=[];
 if(!sameCenter){refinementRecords=[];strategyReady=false;$('packageConclusion').value=''}
 renderRefinements();renderReadiness();renderActions();
-const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,composition_note,source_key').eq('center_id',id).order('description');if(current?.id!==id)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await Promise.all([loadAudit(),loadStrategyForCenter(),loadRefinements(id,sameCenter)]);if(current?.id!==id)return;renderRefinements();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
+const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,composition_note,source_key,updated_at').eq('center_id',id).order('description');if(current?.id!==id)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await Promise.all([loadAudit(),loadStrategyForCenter(),loadRefinements(id,sameCenter)]);if(current?.id!==id)return;renderRefinements();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
 function renderLines(){const tbody=$('lines');tbody.replaceChildren();const search=$('search').value.toLowerCase(),filter=$('filter').value,analysis=$('analysisFilter').value;for(const x of lines.filter(x=>(filter==='all'||x.category===filter)&&(x.description+' '+x.source_key).toLowerCase().includes(search)&&(analysis==='all'||(analysis==='done'===!!String(x.justification||'').trim())))){const tr=document.createElement('tr');for(const [value,isNumber] of [[x.description,false],[x.category==='revenue'?'Receita':'Despesa',false],[br(annual(x)),true],[String(x.justification||'').trim()?'Justificada':'Pendente',false]]){const td=document.createElement('td');td.textContent=value;if(isNumber)td.className='num';tr.append(td)}const td=document.createElement('td'),b=document.createElement('button');b.className='action secondary';b.textContent='Analisar';b.onclick=()=>editLine(x);const actions=document.createElement('div');actions.className='rubric-actions';actions.append(b,rubricNoteButton(x));td.append(actions);tr.append(td);tbody.append(tr)}if(!tbody.children.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.textContent='Nenhuma rubrica encontrada.';tr.append(td);tbody.append(tr)}}
 async function checkMasterSource(force=false){
@@ -407,11 +407,79 @@ function reuseAnalysisControl(rubric,apply){
  control.append(label,sourceLabel,feedback);
  return control;
 }
-function editLine(x){editing=x;tab('pacotes');$('editor').classList.remove('hidden');$('lineTitle').textContent=x.description;$('justification').value=x.justification||'';$('alternative').value=x.alternative||'';$('compositionNote').replaceChildren(compositionNoteControl(x,['draft','changes_requested'].includes(current.status)));$('reuseAnalysis').replaceChildren(reuseAnalysisControl(x,source=>{
-   if(source.justification?.trim())$('justification').value=source.justification;
-   if(source.alternative?.trim())$('alternative').value=source.alternative;
-  }));const holder=$('months');holder.replaceChildren();months.forEach((m,i)=>{const l=document.createElement('label');l.textContent=m;const inp=document.createElement('input');inp.type='number';inp.step='0.01';inp.value=Number(x.months[i]);inp.dataset.month=i;inp.disabled=profile.role!=='admin';l.append(inp);holder.append(l)});$('save').disabled=current.status==='approved'||!(profile.role==='admin'||['draft','changes_requested'].includes(current.status));$('editor').scrollIntoView({behavior:'smooth',block:'start'})}
-$('editForm').onsubmit=async e=>{e.preventDefault();if(!editing)return;const values=[...document.querySelectorAll('[data-month]')].map(x=>Number(x.value));if(values.some(x=>!Number.isFinite(x)))return notice('Valores mensais inválidos.',true);if(current.status==='approved'||(profile.role!=='admin'&&!['draft','changes_requested'].includes(current.status)))return notice('Pacote bloqueado para edição neste estado.',true);const r=profile.role==='admin'?await db.from('obz_lines').update({months:values,justification:$('justification').value,alternative:$('alternative').value,updated_at:new Date().toISOString()}).eq('id',editing.id).eq('center_id',current.id):await db.rpc('obz_update_justification',{p_line:editing.id,p_justification:$('justification').value,p_alternative:$('alternative').value});if(r.error)return notice('Não foi possível salvar: '+r.error.message,true);await chooseCenter();notice('Análise salva.')};
+function canEditRubric(){
+ return current?.status!=='approved'&&(profile?.role==='admin'||canRefine());
+}
+
+function editLine(rubric){
+ if(!tab('pacotes'))return;
+ editing=rubric;
+ const editable=canEditRubric();
+ $('editor').classList.remove('hidden');
+ $('lineTitle').textContent=rubric.description;
+ $('justification').value=rubric.justification||'';
+ $('alternative').value=rubric.alternative||'';
+ $('justification').readOnly=!editable;
+ $('alternative').readOnly=!editable;
+ $('compositionNote').replaceChildren(compositionNoteControl(rubric,['draft','changes_requested'].includes(current.status)));
+ $('reuseAnalysis').replaceChildren(...(editable?[reuseAnalysisControl(rubric,source=>{
+  if(source.justification?.trim())$('justification').value=source.justification;
+  if(source.alternative?.trim())$('alternative').value=source.alternative;
+ })]:[]));
+ const holder=$('months');
+ holder.replaceChildren();
+ for(const [index,month] of months.entries()){
+  const label=document.createElement('label');
+  label.textContent=month;
+  const input=document.createElement('input');
+  input.type='number';
+  input.step='0.01';
+  input.value=rubric.months?.[index]??'';
+  input.dataset.month=index;
+  input.required=true;
+  input.readOnly=!editable;
+  label.append(input);
+  holder.append(label);
+ }
+ const updatePreview=()=>{
+  const values=[...holder.querySelectorAll('input')].map(input=>input.valueAsNumber);
+  $('rubricAnnualPreview').textContent=values.every(Number.isFinite)
+   ?'Total anual da rubrica · '+br(values.reduce((total,value)=>total+value,0))
+   :'Preencha os 12 meses para calcular o total anual.';
+ };
+ holder.oninput=updatePreview;
+ updatePreview();
+ $('save').disabled=!editable;
+ $('editor').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+const pendingRubricSaves=new Set();
+$('editForm').onsubmit=async event=>{
+ event.preventDefault();
+ if(!editing||!canEditRubric()||pendingRubricSaves.has(editing.id))return;
+ const rubric=editing, centerId=current.id;
+ const values=[...$('months').querySelectorAll('input')].map(input=>input.valueAsNumber);
+ if(values.length!==12||values.some(value=>!Number.isFinite(value)))return notice('Informe os 12 valores mensais.',true);
+ pendingRubricSaves.add(rubric.id);
+ $('save').disabled=true;
+ try{
+  const result=await db.rpc('obz_save_rubric_analysis',{
+   p_center:centerId,p_line:rubric.id,p_months:values,
+   p_justification:$('justification').value,p_alternative:$('alternative').value,
+   p_previous_updated_at:rubric.updated_at
+  });
+  if(result.error)throw result.error;
+  if(current?.id===centerId){
+   await chooseCenter();
+   notice('Análise e valores mensais salvos no pacote.');
+  }
+ }catch(error){
+  notice('Não foi possível salvar: '+error.message,true);
+ }finally{
+  pendingRubricSaves.delete(rubric.id);
+  if(editing?.id===rubric.id)$('save').disabled=!canEditRubric();
+ }
+};
 function renderWorkflow(){const host=$('workflow');host.replaceChildren();const statuses=['draft','submitted','in_review','changes_requested','approved'];for(const s of statuses){const el=document.createElement('span');el.className='step'+(s===current.status?' active':'');el.textContent=statusLabel(s);host.append(el)}}
 function readinessState(){
  const missing=lines.filter(l=>!String(l.justification||'').trim()).length;
