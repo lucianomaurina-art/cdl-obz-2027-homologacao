@@ -29,6 +29,8 @@
 .refinement-timeline>li:before{content:'';position:absolute;top:20px;left:-26px;width:12px;height:12px;border-radius:50%;background:#2c7589;border:2px solid white}
 .refinement-timeline h3{margin:0 0 6px}.refinement-timeline li li{margin-bottom:6px}.refinement-timeline button{margin-top:8px}
 .refinement-text{white-space:pre-wrap;overflow-wrap:anywhere}.reuse-picker{margin-top:8px}
+.cbs-rate{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,150px);gap:12px;align-items:center;border-bottom:1px solid #e3ebf3;padding:6px 0}
+.cbs-rate input[type=checkbox]{width:auto;margin-right:4px}.cbs-supplier{margin:12px 0;padding:12px;background:#f4f8fb;border-radius:8px}
 </style></head><body><header><div><strong>CDL Novo Hamburgo <span style="opacity:.55">/</span> OBZ 2027</strong><small>Gestão Orçamentária · Orçamento Base Zero</small></div><div class="right"><span class="pill">HOMOLOGAÇÃO</span><span id="who" class="user"></span><button id="logout" class="action secondary hidden">Sair</button></div></header>
 <div id="login" class="auth card"><div class="eyebrow">Acesso restrito</div><h2>Entrar na plataforma</h2><p class="muted">Utilize seu acesso da Plataforma de Demandas CDL.</p><form id="loginForm"><label>E-mail<input type="email" name="email" autocomplete="username" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><button class="action" style="width:100%">Entrar</button></form></div>
 <div id="workspace" class="shell hidden"><aside><div class="asideTitle">PLANEJAMENTO 2027</div><button class="nav active" data-tab="painel">Painel executivo</button><button class="nav" data-tab="pacotes">Pacotes de decisão</button><button class="nav" data-tab="cenarios">Cenários</button><button class="nav" data-tab="governanca">Governança</button><button class="nav hidden" data-tab="alcadas">Alçadas e Cadastros</button><div class="asideTitle">FERRAMENTAS</div><a id="adminLink" class="nav hidden" href="./importacao.html" style="display:block;text-decoration:none">↥ &nbsp; Atualização controlada (CSV)</a></aside><main class="content">
@@ -60,6 +62,15 @@
 <p class="muted">Ao selecionar um RK, o objetivo estratégico correspondente é incluído automaticamente. Catálogos provenientes das planilhas de estratégia e portfólio de 2027; metas e indicadores devem ser validados contra as versões vigentes.</p>
 <div class="toolbar" style="align-items:center"><button id="strategySave" class="action" disabled>Salvar todos os vínculos do pacote</button><button id="strategyDiscard" class="action secondary" disabled>Descartar edições</button><span id="strategyFeedback" class="muted" role="status">Nenhuma alteração pendente.</span></div>
 </div>
+<details id="cbsProjection" class="card hidden"><summary><strong>Projeção de CBS</strong></summary>
+<p class="muted">Selecione as receitas que compõem a base e informe a alíquota projetada de cada uma. Registre somente os créditos que pretende considerar na projeção.</p>
+<p id="cbsDestination" class="muted"></p><p id="cbsSavedStatus" role="status"></p>
+<h3>Receitas e alíquotas</h3><div id="cbsRates"></div>
+<h3>Créditos de fornecedores</h3><div id="cbsSuppliers"></div><button id="cbsAddSupplier" type="button" class="action secondary">Adicionar crédito</button>
+<label>Premissas da projeção<textarea id="cbsNote" rows="3" maxlength="4000" placeholder="Registre a origem das alíquotas e dos créditos considerados."></textarea></label>
+<h3>Projeção mensal</h3><div id="cbsPreview" class="tablewrap"></div>
+<div class="toolbar"><button id="cbsSave" type="button" class="action secondary" disabled>Salvar memória de cálculo</button><button id="cbsApply" type="button" class="action" disabled>Aplicar à rubrica de CBS</button></div>
+</details>
 <div class="card"><div class="sectionHead"><h2>Preparação do pacote para análise</h2><span class="pill" id="analysisProgress">0 de 0</span></div><p class="muted">Revise os valores mensais e salve a justificativa de cada rubrica antes de submeter o pacote.</p><div class="meter"><span id="analysisMeter" style="background:#158061"></span></div><p id="analysisSummary" class="muted" role="status">Aguardando seleção do pacote.</p><button id="nextPending" class="action secondary">Analisar próxima rubrica pendente</button></div><div class="card"><div class="sectionHead"><h2>Rubricas e justificativas</h2><span class="pill" id="lineCount">0 rubricas</span></div><div class="tablewrap"><table><thead><tr><th>Rubrica</th><th>Tipo</th><th class="num">Valor anual</th><th>Situação da análise</th><th>Ação</th></tr></thead><tbody id="lines"></tbody></table></div></div><div id="editor" class="card hidden"><h2>Justificativa e alternativas da rubrica</h2><p id="lineTitle" class="muted"></p><form id="editForm"><div id="compositionNote"></div><h3>Valores mensais da rubrica</h3><p class="muted">Ao salvar, os valores passam a compor a proposta do pacote no OBZ. A atualização da Planilha Mestra é feita à parte.</p><div id="months" class="monthly"></div><p id="rubricAnnualPreview" aria-live="polite"></p><p class="muted">Na análise OBZ, explique por que o recurso precisa existir em 2027, qual atividade ou entrega sustenta, como o valor foi estimado e o impacto de não disponibilizá-lo. Sempre que possível, relacione o gasto ao RK confirmado do pacote.</p><div id="reuseAnalysis"></div><label>Justificativa técnica e operacional<textarea id="justification" maxlength="4000" required placeholder="Necessidade do recurso, volume/critério de cálculo, entrega esperada, risco da não execução e relação com o objetivo/RK"></textarea></label><label>Alternativa proposta / impacto<textarea id="alternative" maxlength="4000" placeholder="Manter, renegociar, reduzir, compartilhar, substituir ou não executar; economia e impactos esperados"></textarea></label><button id="save" class="action">Salvar análise</button></form></div>
 <div id="packageConclusionCard" class="card hidden"><div class="sectionHead"><h2>Conclusão do refinamento</h2><span id="refinementCount" class="pill">0 refinamentos</span></div>
 <label for="packageConclusion">Conclusão do gestor</label>
@@ -72,6 +83,7 @@
 <section id="governanca" class="tab hidden"><div class="eyebrow">Controle e responsabilidade</div><h1>Governança do orçamento</h1><p class="subtitle">Fluxo de revisão, aprovação e trilha de auditoria.</p><div class="card"><h2>Prontidão para submissão</h2><p class="muted">O pacote somente pode ser submetido quando o responsável tiver conferido os vínculos estratégicos e registrado as justificativas das rubricas e a conclusão do refinamento.</p><div id="readinessSummary" role="status" class="muted">Aguardando dados...</div></div><div class="card"><h2>Etapas do processo</h2><div class="workflow" id="workflow"></div></div><div class="card"><div class="sectionHead"><h2 id="governanceVersion">Versão para avaliação</h2><button id="exportRefinement" type="button" class="action secondary" disabled>Exportar pacote em PDF</button></div>
 <h3>Conclusão do gestor</h3><p id="governanceConclusion" class="refinement-text"></p>
 <h3>Linha do tempo do refinamento</h3><div id="refinementTimeline" aria-live="polite"></div>
+<details id="assessmentCbs" class="hidden"><summary>Projeção de CBS da versão em avaliação</summary><div id="assessmentCbsContent" class="tablewrap"></div></details>
 <details id="assessmentRubrics" class="hidden"><summary>Rubricas da versão em avaliação</summary><div id="assessmentRubricTable" class="tablewrap"></div></details></div>
 <div class="grid2"><div class="card"><h2>Tramitação do pacote</h2><p>Situação atual: <strong id="status">—</strong></p><div id="actions" class="toolbar"></div></div><div class="card"><h2>Histórico de alterações</h2><div id="audit" class="muted">Sem registros.</div></div></div></section><section id="alcadas" class="tab hidden">
 <div class="eyebrow">Administração do OBZ 2027</div><h1>Alçadas e Cadastros</h1>
@@ -227,7 +239,7 @@ if(!current)return;
 const id=current.id, sameCenter=previousId===id;
 refinementsReady=false;
 lines=[];
-if(!sameCenter){refinementRecords=[];strategyReady=false;$('packageConclusion').value=''}
+if(!sameCenter){refinementRecords=[];cbsRecord=null;$('cbsProjection').open=false;$('cbsProjection').classList.add('hidden');strategyReady=false;$('packageConclusion').value=''}
 renderRefinements();renderReadiness();renderActions();
 const r=await db.from('obz_lines').select('id,description,category,months,justification,alternative,composition_note,source_key,updated_at').eq('center_id',id).order('description');if(current?.id!==id)return;if(r.error)return notice('Erro ao carregar rubricas: '+r.error.message,true);lines=r.data||[];const revenue=lines.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=lines.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('empty').classList.toggle('hidden',lines.length>0);for(const [k,v] of Object.entries({revenue,expense,balance:revenue-expense}))$(k).textContent=lines.length?br(v):'—';$('lineCount').textContent=lines.length+' rubricas';const reviewed=lines.filter(x=>String(x.justification||'').trim()).length;const pending=lines.length-reviewed;$('analysisProgress').textContent=reviewed+' de '+lines.length+' justificadas';$('analysisMeter').style.width=(lines.length?100*reviewed/lines.length:0)+'%';$('analysisSummary').textContent=pending?pending+' rubrica(s) ainda sem justificativa técnica.':'Todas as rubricas possuem justificativa técnica.';$('nextPending').disabled=!pending;$('status').textContent=statusLabel(current.status);renderLines();renderWorkflow();renderActions();await Promise.all([loadAudit(),loadStrategyForCenter(),loadRefinements(id,sameCenter)]);if(current?.id!==id)return;renderRefinements();renderReadiness();renderActions();notice(lines.length?'Pacote carregado.':'Pacote aguardando importação validada de rubricas.')}
 async function loadConsolidated(){if(!centers.length){$('liveSummary').classList.add('hidden');return}const [r,linkResult,proposalResult]=await Promise.all([db.from('obz_lines').select('center_id,category,months,source_key,justification').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_links').select('center_id,objective_code,kr_code,portfolio_key').in('center_id',centers.map(x=>x.id)),db.from('obz_center_strategy_proposals').select('center_id').in('center_id',centers.map(x=>x.id))]);if(r.error){$('liveSummary').classList.add('hidden');notice('Consolidação indisponível: '+r.error.message,true);return}const rows=r.data||[];dashboardRows=rows;renderExecutiveChart();const loaded=new Set(rows.map(x=>x.center_id)),strategicLinks=linkResult.error?[]:linkResult.data||[],strategicCenters=new Set(strategicLinks.map(x=>x.center_id));$('strategyExecutive').classList.toggle('hidden',!!linkResult.error);if(!linkResult.error){$('strategyCoverage').textContent=strategicCenters.size+' de '+centers.length+' pacotes vinculados';$('strategyCoverageDetail').textContent='Propostas preparadas: '+(proposalResult.error?'indisponível':(proposalResult.data||[]).length)+' de '+centers.length+' · Vínculos já confirmados: '+strategicCenters.size+' pacotes · Objetivos: '+strategicLinks.filter(x=>x.objective_code).length+' · RKs: '+strategicLinks.filter(x=>x.kr_code).length+' · Metas do portfólio: '+strategicLinks.filter(x=>x.portfolio_key).length;}const overview=$('packageOverview');overview.replaceChildren();for(const c of centers){const subset=rows.filter(x=>x.center_id===c.id),done=subset.filter(x=>String(x.justification||'').trim()).length,p=document.createElement('p');p.textContent=c.name+' · '+statusLabel(c.status)+' · '+done+'/'+subset.length+' justificadas · '+strategicLinks.filter(x=>x.center_id===c.id).length+' vínculos estratégicos';overview.append(p)}const revenue=rows.filter(x=>x.category==='revenue').reduce((a,x)=>a+annual(x),0),expense=rows.filter(x=>x.category==='expense').reduce((a,x)=>a+annual(x),0);$('liveSummary').classList.remove('hidden');$('loadedCount').textContent=loaded.size+' de '+centers.length+' pacotes com rubricas';$('liveRevenue').textContent=br(revenue);$('liveExpense').textContent=br(expense);$('liveBalance').textContent=br(revenue-expense);const diffRev=revenue-reference.revenue,diffExp=expense-reference.expense,diffResult=(revenue-expense)-(reference.revenue-reference.expense),v=$('consolidationVariance');v.classList.toggle('hidden',loaded.size!==centers.length);if(loaded.size===centers.length){const transfer=rows.filter(x=>x.source_key==='OBZ2027:CERTIFICACAO_DIGITAL:96').reduce((a,x)=>a+annual(x),0);const adjustedRevenue=revenue-transfer;v.textContent='Ponte de conciliação: receitas dos pacotes '+br(revenue)+' menos repasse interno da Certificação Digital (linha 96) '+br(transfer)+' = receita consolidada '+br(adjustedRevenue)+'. Diferença residual da receita: '+br(adjustedRevenue-reference.revenue)+'. Despesas: diferença de '+br(diffExp)+' entre a soma dos pacotes e o consolidado, cuja fórmula usa base histórica e ajustes tributários. Resultado dos centros difere em '+br(diffResult)+'. Nenhuma rubrica foi alterada.'}}
@@ -545,7 +557,7 @@ function renderActions(){
  }
  if(!host.children.length)host.textContent=admin&&self&&current.status==='submitted'?'Este pacote foi submetido por você. A revisão e aprovação exigem outro administrador para preservar a segregação de alçadas.':'Nenhuma ação disponível para este perfil e situação.'
 }
-async function loadAudit(){const id=current.id;const r=await db.from('obz_audit').select('action,created_at').eq('center_id',id).order('created_at',{ascending:false}).limit(30);if(current?.id!==id)return;const host=$('audit');host.replaceChildren();if(r.error){host.textContent='Histórico indisponível.';return}if(!r.data?.length){host.textContent='Sem alterações registradas.';return}for(const x of r.data){const p=document.createElement('p');p.textContent=new Date(x.created_at).toLocaleString('pt-BR')+' · '+({baseline_import_registered:'Carga inicial registrada (Planilha Mestra OBZ 2027)',manager_assignment:'Responsável atribuído',status:'Situação alterada',import:'Rubricas importadas',UPDATE:'Rubrica atualizada'}[x.action]||x.action);host.append(p)}}
+async function loadAudit(){const id=current.id;const r=await db.from('obz_audit').select('action,created_at').eq('center_id',id).order('created_at',{ascending:false}).limit(30);if(current?.id!==id)return;const host=$('audit');host.replaceChildren();if(r.error){host.textContent='Histórico indisponível.';return}if(!r.data?.length){host.textContent='Sem alterações registradas.';return}for(const x of r.data){const p=document.createElement('p');p.textContent=new Date(x.created_at).toLocaleString('pt-BR')+' · '+({baseline_import_registered:'Carga inicial registrada (Planilha Mestra OBZ 2027)',manager_assignment:'Responsável atribuído',cbs_projection:'Projeção de CBS registrada',status:'Situação alterada',import:'Rubricas importadas',UPDATE:'Rubrica atualizada'}[x.action]||x.action);host.append(p)}}
 let refinementRecords=[], refinementCycle=0, submittedRefinement=null;
 let refinementsReady=false, refinementSaving=false;
 const latestRefinement=()=>refinementRecords.at(-1);
@@ -565,6 +577,7 @@ function rubricChanged(before,after){
 function refinementCurrent(){
  const latest=latestRefinement()?.new_value;
  if(!refinementsReady||!latest||Number(latest.cycle)!==refinementCycle||!strategyReady||strategyDirty())return false;
+ if(String(latest.snapshot.cbs?.id??'')!==String(cbsRecord?.id??''))return false;
  const prior=new Map(latest.snapshot.lines.map(line=>[line.id,line]));
  if(prior.size!==lines.length||lines.some(line=>rubricChanged(prior.get(line.id),line)))return false;
  return [['objectives','objective_code'],['krs','kr_code'],['portfolio','portfolio_key']].every(([group,key])=>{
@@ -648,6 +661,9 @@ function renderRefinements(){
   roundElement(document,'p',refinementsReady?'Nenhuma rodada concluída registrada.':'Histórico aguardando carregamento.','muted'));
  const displayed=visible.at(-1)?.new_value;
  $('governanceConclusion').textContent=displayed?.conclusion||'Aguardando a conclusão do gestor.';
+ const cbs=displayed?.snapshot.cbs?.projection;
+ $('assessmentCbs').classList.toggle('hidden',!cbs);
+ $('assessmentCbsContent').replaceChildren(...(cbs?[cbsSummary(document,cbs,true)]:[]));
  $('assessmentRubrics').classList.toggle('hidden',!displayed);
  $('assessmentRubricTable').replaceChildren(...(displayed?[buildRubricTable(document,displayed.snapshot.lines)]:[]));
  $('governanceVersion').textContent=assessment&&visible.at(-1)===assessment
@@ -658,12 +674,14 @@ async function loadRefinements(id,preserveDraft=false){
  const records=[];
  for(let offset=0;;offset+=100){
   const r=await db.from('obz_audit').select('id,action,created_at,new_value').eq('center_id',id)
-   .in('action',['package_refinement','status']).order('id').range(offset,offset+99);
+   .in('action',['package_refinement','status','cbs_projection']).order('id').range(offset,offset+99);
   if(current?.id!==id)return;
   if(r.error){refinementsReady=false;renderRefinements();notice('Histórico indisponível: '+r.error.message,true);return}
   records.push(...r.data);
   if(r.data.length<100)break;
  }
+ cbsRecord=records.findLast(record=>record.action==='cbs_projection')??null;
+ renderCbs();
  refinementRecords=records.filter(record=>record.action==='package_refinement');
  refinementCycle=Number(records.findLast(record=>record.action==='status'&&record.new_value.status==='changes_requested')?.id||0);
  submittedRefinement=Number(records.findLast(record=>record.action==='status'&&record.new_value.status==='submitted')?.new_value.refinement_id||0);
@@ -732,6 +750,8 @@ function printRefinement(record){
  const references=[...new Set(strategy.flatMap(link=>[link.objective_code,link.kr_code,link.portfolio_key]).filter(Boolean))];
  if(references.length)header.append(roundElement(doc,'small','Vínculos estratégicos · '+references.join(' · ')));
  doc.body.append(buildRubricTable(doc,rubrics));
+ const cbs=record.new_value.snapshot.cbs?.projection;
+ if(cbs)doc.body.append(roundElement(doc,'h2','Projeção de CBS'),cbsSummary(doc,cbs,true));
  print.focus();
  print.print();
 }
@@ -751,6 +771,180 @@ function buildRubricTable(doc,rubrics){
   }
  }
  return table;
+}
+
+let cbsRecord=null,cbsBusy=false;
+
+function cbsTargets(){
+ const expenses=lines.filter(line=>line.category==='expense');
+ const spc=expenses.filter(line=>/^OBZ2027:SPC_BRASIL:(438|431)$/.test(line.source_key));
+ if(spc.length)return spc.length===2?'split':null;
+ return expenses.filter(line=>/^CBS LÍQUIDA/i.test(line.description)).length===1?'net':null;
+}
+
+function cbsInput(type,value,disabled,attributes={}){
+ const input=document.createElement('input');
+ input.type=type;
+ input.value=value;
+ input.disabled=disabled;
+ Object.assign(input,attributes);
+ return input;
+}
+
+function cbsMoney(values){
+ return values.map((amount,index)=>months[index]+' '+br(amount)).join(' · ');
+}
+
+function cbsSummary(doc,projection,details=false){
+ const container=doc.createElement('div');
+ const table=doc.createElement('table'), header=table.createTHead().insertRow(), body=table.createTBody();
+ const metrics=['base','debit','credit','net'];
+ for(const heading of ['Mês','Base de receita','Débito','Créditos','CBS líquida'])header.append(roundElement(doc,'th',heading));
+ for(let index=0;index<=12;index++){
+  const row=body.insertRow();
+  row.insertCell().textContent=months[index]||'Total anual';
+  for(const key of metrics)row.insertCell().textContent=br(index===12
+   ?projection[key].reduce((sum,value)=>sum+Number(value),0):projection[key][index]);
+ }
+ container.append(table);
+ if(projection.net.some(value=>value<0))container.append(roundElement(doc,'p','Os valores líquidos negativos indicam saldo credor projetado no mês.','muted'));
+ if(details){
+  container.append(roundElement(doc,'p',projection.applied?'Projeção aplicada às rubricas.':'Memória salva para conferência.'));
+  for(const rate of projection.rates)container.append(roundElement(doc,'p',rate.name+' · '+rate.rate+'%'));
+  for(const item of projection.suppliers)container.append(roundElement(doc,'p',item.name+' · '+cbsMoney(item.amounts)));
+  if(projection.note)container.append(roundElement(doc,'p',projection.note,'refinement-text'));
+ }
+ return container;
+}
+
+function renderCbs(){
+ const revenues=lines.filter(line=>line.category==='revenue');
+ $('cbsProjection').classList.toggle('hidden',!revenues.length);
+ if(!revenues.length)return;
+ const editable=canRefine(), saved=cbsRecord?.new_value, target=cbsTargets();
+ const rates=[], suppliers=[];
+ const rateHost=$('cbsRates'), suppliersHost=$('cbsSuppliers');
+ rateHost.replaceChildren();
+ suppliersHost.replaceChildren();
+ $('cbsNote').value=saved?.note||'';
+ $('cbsNote').readOnly=!editable;
+ $('cbsAddSupplier').disabled=!editable;
+ $('cbsDestination').textContent=target==='split'
+  ?'SPC Brasil · débito e crédito são aplicados às duas rubricas existentes.'
+  :target==='net'?'Destino · rubrica CBS líquida do pacote.':'Sem rubrica de CBS vinculada. A memória de cálculo pode ser salva para conferência.';
+ const changedBase=saved?.rates.some(rate=>{
+  const line=revenues.find(revenue=>revenue.id===rate.id);
+  return !line||rate.base.some((amount,index)=>line.months[index]==null||Number(line.months[index])!==Number(amount));
+ });
+ $('cbsSavedStatus').textContent=changedBase?'As receitas mudaram desde a última projeção salva. Confira e atualize o cálculo.'
+  :saved?.applied?'Última projeção aplicada às rubricas.':saved?'Memória de cálculo salva.':'';
+ for(const line of revenues){
+  const prior=saved?.rates.find(rate=>rate.id===line.id);
+  const row=document.createElement('div');
+  row.className='cbs-rate';
+  const choice=document.createElement('label'), selected=cbsInput('checkbox','',!editable);
+  selected.checked=Boolean(prior);
+  choice.append(selected,document.createTextNode(' '+line.description));
+  const rateLabel=roundElement(document,'label','Alíquota (%)');
+  const rate=cbsInput('number',prior?.rate??'',!editable||!prior,{min:'0',max:'100',step:'0.0001'});
+  rate.setAttribute('aria-label','Alíquota de '+line.description);
+  rateLabel.append(rate);
+  row.append(choice,rateLabel);
+  rateHost.append(row);
+  rates.push({line,selected,rate});
+  selected.onchange=()=>{rate.disabled=!editable||!selected.checked;refresh()};
+  rate.oninput=refresh;
+ }
+
+ function addSupplier(item){
+  const row=document.createElement('div');
+  row.className='cbs-supplier';
+  const label=roundElement(document,'label','Fornecedor ou rubrica de despesa');
+  const name=cbsInput('text',item?.name||'',!editable,{maxLength:200});
+  label.append(name);
+  row.append(label);
+  const grid=document.createElement('div');
+  grid.className='monthly';
+  const inputs=months.map((month,index)=>{
+   const monthly=roundElement(document,'label',month);
+   const input=cbsInput('number',item?.amounts[index]??0,!editable,{min:'0',max:'999999999999',step:'0.01'});
+   monthly.append(input);
+   grid.append(monthly);
+   return input;
+  });
+  row.append(grid);
+  const record={name,inputs};
+  if(editable){
+   const remove=roundElement(document,'button','Remover crédito','action secondary');
+   remove.type='button';
+   remove.onclick=()=>{suppliers.splice(suppliers.indexOf(record),1);row.remove();refresh()};
+   row.append(remove);
+  }
+  suppliers.push(record);
+  row.oninput=refresh;
+  suppliersHost.append(row);
+ }
+
+ function readProjection(){
+  const selected=rates.filter(row=>row.selected.checked);
+  if(!selected.length||selected.some(({rate,line})=>rate.value===''||!rate.checkValidity()||
+    line.months?.length!==12||line.months.some(value=>value==null||!Number.isFinite(Number(value)))))return null;
+  if(suppliers.some(({name,inputs})=>!name.value.trim()||inputs.some(input=>input.value===''||!input.checkValidity())))return null;
+  return {
+   rates:selected.map(({line,rate})=>({id:line.id,rate:rate.valueAsNumber})),
+   suppliers:suppliers.map(({name,inputs})=>({name:name.value.trim(),amounts:inputs.map(input=>input.valueAsNumber)}))
+  };
+ }
+
+ function refresh(){
+  const data=readProjection();
+  $('cbsSave').disabled=!editable||!data||cbsBusy;
+  $('cbsApply').disabled=!editable||!data||!target||cbsBusy;
+  const preview=$('cbsPreview');
+  preview.replaceChildren();
+  if(!data){
+   preview.textContent='Selecione as receitas, informe as alíquotas e complete os créditos adicionados.';
+   return;
+  }
+  const base=[],debit=[],credit=[],net=[];
+  for(let index=0;index<12;index++){
+   const selected=rates.filter(row=>row.selected.checked);
+   base.push(selected.reduce((sum,row)=>sum+Number(row.line.months[index]),0));
+   const raw=selected.reduce((sum,row)=>sum+Number(row.line.months[index])*row.rate.valueAsNumber/100,0);
+   debit.push(Math.sign(raw)*Math.round((Math.abs(raw)+Number.EPSILON)*100)/100);
+   credit.push(data.suppliers.reduce((sum,item)=>sum+Math.round(item.amounts[index]*100),0)/100);
+   net.push((Math.round(debit[index]*100)-Math.round(credit[index]*100))/100);
+  }
+  preview.append(cbsSummary(document,{base,debit,credit,net}));
+ }
+
+ async function save(apply){
+  const data=readProjection();
+  if(!data||!canRefine()||cbsBusy||(apply&&!target))return;
+  if(apply&&!confirm('Aplicar a projeção de CBS aos 12 meses das rubricas vinculadas?'))return;
+  const id=current.id;
+  cbsBusy=true;
+  refresh();
+  try{
+   const result=await db.rpc('obz_save_cbs_projection',{
+    p_center:id,p_rates:data.rates,p_suppliers:data.suppliers,p_note:$('cbsNote').value.trim(),
+    p_previous:cbsRecord?.id??null,p_apply:apply
+   });
+   if(result.error)throw result.error;
+   if(current?.id===id){
+    cbsBusy=false;
+    await chooseCenter();
+    notice(apply?'Projeção de CBS aplicada às rubricas do pacote.':'Memória de cálculo de CBS salva.');
+   }
+  }catch(error){notice('Não foi possível salvar a CBS: '+error.message,true)}
+  finally{if(cbsBusy){cbsBusy=false;if(current?.id===id)refresh();else if(current)renderCbs()}}
+ }
+
+ for(const item of saved?.suppliers||[])addSupplier(item);
+ $('cbsAddSupplier').onclick=()=>{if(editable&&!cbsBusy&&suppliers.length<100){addSupplier();refresh()}};
+ $('cbsSave').onclick=()=>save(false);
+ $('cbsApply').onclick=()=>save(true);
+ refresh();
 }
 
 boot();
