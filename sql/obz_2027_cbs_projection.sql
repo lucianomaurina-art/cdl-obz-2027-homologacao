@@ -52,7 +52,7 @@ begin
      or r.rate not between 0 and 100 or r.rate<>round(r.rate,4)
      or array_position(l.months,null) is not null
  ) or (select count(distinct r.id) from jsonb_to_recordset(p_rates) as r(id uuid))<>jsonb_array_length(p_rates) then
-  raise exception 'Confira as receitas selecionadas e suas alíquotas (0 a 100%, até quatro casas decimais)';
+  raise exception 'Confira as receitas selecionadas e suas alíquotas (0 a 100%%, até quatro casas decimais)';
  end if;
 
  if exists (
